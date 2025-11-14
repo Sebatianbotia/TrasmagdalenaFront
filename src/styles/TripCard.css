@@ -1,0 +1,149 @@
+:root {
+  --bg: #dddde2;    
+  --chip: #bfbfc9;          
+  --text: #5f6368;  
+  --muted: #9aa0a6;      
+  --black: #1f2937;       
+  --shadow: 0 6px 24px rgba(17, 24, 39, 0.12);
+  --radius: 18px;
+  --cta: #e63946;           
+  --cta-hover: #cf2f3b;
+}
+
+.trip-card {
+  position: relative;
+  display: grid;
+  gap: 16px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px 24px 20px 24px;
+  color: var(--text);
+  height: auto;
+  box-sizing: border-box;
+}
+
+
+.trip-card__date {
+  position: absolute;
+  right: 16px;
+  top: 12px;
+  background: var(--chip);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.2px;
+}
+
+.trip-card__top {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 16px;
+}
+
+.trip-card__route {
+  display: grid;
+  gap: 8px;
+}
+
+.trip-card__line {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.trip-card__line--places {
+  font-size: 18px;
+  color: var(--black);
+  font-weight: 500;
+}
+
+.trip-card__line--times {
+  font-size: 16px;
+  color: var(--muted);
+}
+
+.trip-card__place { white-space: nowrap; }
+.trip-card__time { white-space: nowrap; }
+
+.trip-card__arrow {
+  opacity: 0.6;
+  font-size: 18px;
+  transform: translateY(1px);
+}
+
+.trip-card__price {
+  font-size: 22px;
+  color: var(--black);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.trip-card__bottom {
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.trip-card__meta {
+  font-size: 14px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.trip-card__label {
+  color: var(--muted);
+}
+
+.trip-card__value {
+  color: var(--black);
+  font-weight: 500;
+}
+
+.trip-card__seats {
+  color: var(--black);
+  font-weight: 800;
+}
+
+
+.trip-card__cta {
+  justify-self: end;
+  background: var(--cta);
+  color: #fff;
+  border: 0;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .04s ease, background .15s ease;
+}
+
+.trip-card__cta:hover { background: var(--cta-hover); }
+.trip-card__cta:active { transform: translateY(1px); }
+
+@media (max-width: 640px) {
+  .trip-card {
+    padding: 18px;
+  }
+  .trip-card__top {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .trip-card__price {
+    justify-self: start;
+  }
+  .trip-card__bottom {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .trip-card__cta {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+    text-align: center;
+  }
+}

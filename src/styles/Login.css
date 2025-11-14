@@ -1,0 +1,256 @@
+
+:root {
+  --primary: #ec1313;
+  --background: #f8f6f6;
+  --white: #ffffff;
+  --black: #000000;
+  --neutral-200: #e5e5e5;
+  --neutral-300: #d4d4d4;
+  --neutral-400: #a3a3a3;
+  --neutral-500: #737373;
+  --neutral-600: #525252;
+}
+
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: var(--background);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+
+.login-container {
+  width: 100%;
+  max-width: 28rem;
+  position: relative;
+}
+
+.close-login-btn {
+  position: absolute;
+  top: -3rem;
+  right: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--white);
+  border: 1px solid var(--neutral-300);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.close-login-btn:hover {
+  background-color: var(--neutral-200);
+  transform: scale(1.05);
+}
+
+.close-login-btn .material-symbols-outlined {
+  font-size: 1.5rem;
+  color: var(--neutral-600);
+}
+
+.login-card {
+  width: 100%;
+  background-color: var(--white);
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--neutral-200);
+}
+
+
+.login-header {
+  padding: 2rem 2rem 1.5rem 2rem;
+  text-align: center;
+}
+
+.brand-name {
+  color: var(--primary);
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: -0.033em;
+  margin: 0;
+}
+
+
+.login-title {
+  padding: 0 2rem 1rem 2rem;
+}
+
+.title {
+  color: var(--black);
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.25rem 0;
+}
+
+.subtitle {
+  color: var(--neutral-500);
+  font-size: 1rem;
+  font-weight: 400;
+  margin: 0;
+}
+
+.login-form {
+  padding: 0 2rem 2rem 2rem;
+}
+
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  color: var(--black);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+
+.form-input {
+  width: 100%;
+  height: 3rem;
+  padding: 0 1rem;
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--black);
+  background-color: var(--white);
+  border: 1px solid var(--neutral-300);
+  border-radius: 0.5rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input::placeholder {
+  color: var(--neutral-400);
+}
+
+.form-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(236, 19, 19, 0.1);
+}
+
+
+.password-input-wrapper {
+  display: flex;
+  position: relative;
+}
+
+.password-input {
+  border-radius: 0.5rem 0 0 0.5rem;
+  border-right: 0;
+}
+
+.toggle-password-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.75rem;
+  color: var(--neutral-500);
+  background-color: var(--white);
+  border: 1px solid var(--neutral-300);
+  border-left: 0;
+  border-radius: 0 0.5rem 0.5rem 0;
+  cursor: pointer;
+  transition: color 0.2s;
+  outline: none;
+}
+
+.toggle-password-btn:hover {
+  color: var(--black);
+}
+
+.toggle-password-btn:focus {
+  box-shadow: 0 0 0 3px rgba(236, 19, 19, 0.1);
+  z-index: 10;
+}
+
+.toggle-password-btn .material-symbols-outlined {
+  font-size: 1.25rem;
+}
+
+.forgot-password-wrapper {
+  text-align: right;
+  margin-bottom: 1.5rem;
+}
+
+.forgot-password-link {
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+
+.form-actions {
+  margin-top: 1.5rem;
+}
+
+.login-btn {
+  width: 100%;
+  height: 3rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--white);
+  background-color: var(--primary);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+  margin-bottom: 1rem;
+}
+
+.login-btn:hover {
+  background-color: #d31111;
+}
+
+.login-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(236, 19, 19, 0.3), 0 0 0 2px var(--white);
+}
+
+
+.register-text {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--neutral-600);
+  margin: 0;
+}
+
+.register-link {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.register-link:hover {
+  text-decoration: underline;
+}
+
+
+@media (min-width: 768px) {
+  .login-header {
+    padding: 2.5rem 2.5rem 1.5rem 2.5rem;
+  }
+
+  .login-title {
+    padding: 0 2.5rem 1rem 2.5rem;
+  }
+
+  .login-form {
+    padding: 0 2.5rem 2.5rem 2.5rem;
+  }
+}
