@@ -1,0 +1,11 @@
+.information__div {
+  margin-top: 4rem;
+    gap: 6.5rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+h3{
+ font-size: 40px;
+}

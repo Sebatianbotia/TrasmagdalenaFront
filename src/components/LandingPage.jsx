@@ -7,7 +7,6 @@ import Panel from "./Admin/Panel";
 export default function LandingPage({onLoginClick}) {
     return (
         <div className="landingPage">
-            {/* <Panel/> */}
             <Header onLoginClick={onLoginClick}/>
             <NavBar/>
             <TripsSection/> 

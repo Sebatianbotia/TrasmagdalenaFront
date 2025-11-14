@@ -1,19 +1,15 @@
 import React, { useState } from 'react';
 import '../styles/Login.css';
 
-const Login = ({ onClose }) => {
+const Login = ({onClose, handleSubmit}) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Aquí manejarías el login
-    console.log('Login submitted');
-  };
 
+ 
   return (
     <div className="login-page">
       <div className="login-container">
@@ -71,7 +67,7 @@ const Login = ({ onClose }) => {
             </div>
 
             <div className="form-actions">
-              <button type="submit" className="login-btn">
+              <button type="submit" className="login-btn" onClick={handleSubmit}>
                 Ingresar
               </button>
               <p className="register-text">

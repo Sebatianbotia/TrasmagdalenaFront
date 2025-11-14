@@ -1,0 +1,53 @@
+:root {
+  --primary-red: #ec1313;
+  --primary-red-light: #fef2f2;
+  --dark-green: #0f4c3a;
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-900: #111827;
+  --green-500: #22c55e;
+}
+
+.information__card {
+    width: 17%;
+  background-color: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.information__card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.card__tittle {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--gray-600);
+  margin-bottom: 0.75rem;
+  text-transform: capitalize;
+}
+
+.card__total {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+@media (max-width: 480px) {
+  .card__total {
+    font-size: 1.5rem;
+  }
+
+  .card__tittle {
+    font-size: 0.813rem;
+  }
+}

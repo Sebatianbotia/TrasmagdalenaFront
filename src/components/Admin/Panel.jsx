@@ -1,63 +1,119 @@
+import { useState } from "react"
 import "../../styles/Admin/panel.css"
+import Dashboard from "./CRUD/Dashboard"
+import AdminBuses from "./CRUD/AdminBuses"
+import AdminAssingments from "./CRUD/AdminAssignments"
+import AdminCities from "./CRUD/AdminCities"
+import AdminConductores from "./CRUD/AdminConductores"
+import AdminIncidents from "./CRUD/AdminIncidents"
+import AdminRutas from "./CRUD/AdminRutas"
+import AdminStops from "./CRUD/AdminStops"
+import AdminTickets from "./CRUD/AdminTickets"
+import AdminTrips from "./CRUD/AdminTrips"
+import AdminUsers from "./CRUD/AdminUsers"
 
+export default function Panel({onClose}) {
+    const [activeSection, setActiveSection] = useState('dashboard');
 
-export default function Panel(){
-    return(
-        <>
-            <div className="panel">
-                <aside className="options">
-                    <div className="options__data">
-                        <h4>Transmagdalena</h4>
-                        <p>Panel de administrador</p>
-                    </div>
-                    <div className="options__actions">
-                        <ul className="actions__list">
-                            <li className="action__item">Administrar Buses</li>
-                            <li className="action__item">Administrar rutas</li>
-                            <li className="action__item">Administrar conductores</li>
-                            <li className="action__item">Administrar usuarios</li>
-                            <li className="action__item">Administrar asignaciones</li>
-                            <li className="action__item">Administrar ciudades</li>
-                            <li className="action__item">Administrar paradas</li>
-                            <li className="action__item">Administrar incidentes</li>
-                            <li className="action__item">Administrar tiquetes</li>
-                            <li className="action__item">Administrar viajes</li>
-                            <li className="action__item">Administrar aaaaa</li>
-                        </ul>
-                    </div>
-                    <button className="exit__btn">Cerrar Sesion</button>
-                </aside>
-                <div className="panelInformation">
-                    <h3>Resumen General</h3>
-                    <div className="information__div">
-                        <div className="information__card">
-                            <p className="card__tittle">Total de buses</p>
-                            <p className="card__total">85</p>
-                        </div>
-                        <div className="information__card">
-                            <p className="card__tittle">Rutas activas</p>
-                            <p className="card__total">85</p>
-                        </div>
-                       <div className="information__card">
-                            <p className="card__tittle">Conductores registrados</p>
-                            <p className="card__total">85</p>
-                        </div>
-                        <div className="information__card">
-                            <p className="card__tittle">Usuarios Registrados</p>
-                            <p className="card__total">85</p>
-                        </div>
-                        <div className="information__card">
-                            <p className="card__tittle">Despachadores</p>
-                            <p className="card__total">85</p>
-                        </div>
-                        <div className="information__card">
-                            <p className="card__tittle">total generado este mes</p>
-                            <p className="card__total">12.00.000</p>
-                        </div>
-                    </div>
+    const renderContent = () => {
+        switch(activeSection) {
+            case 'dashboard': return <Dashboard />;
+            case 'buses': return <AdminBuses />;
+            case 'rutas': return <AdminRutas />;
+            case 'conductores': return <AdminConductores />;
+            case 'usuarios': return <AdminUsers />;
+            case 'asignaciones': return <AdminAssingments/>;
+            case 'ciudades': return <AdminCities/>;
+            case 'paradas': return <AdminStops />;
+            case 'incidentes': return <AdminIncidents />;
+            case 'tiquetes': return <AdminTickets />;
+            case 'viajes': return <AdminTrips />;
+            default: return <Dashboard />;
+        }
+    };
+
+    return (
+        <div className="panel">
+            <aside className="options">
+                <div className="options__data">
+                    <h4>Transmagdalena</h4>
+                    <p>Panel de administrador</p>
                 </div>
-            </div>  
-        </>
-
-    )
+                <div className="options__actions">
+                    <ul className="actions__list">
+                        <li 
+                            className={`action__item ${activeSection === 'dashboard' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('dashboard')}
+                        >
+                            Dashboard
+                        </li>
+                        <li 
+                            className={`action__item ${activeSection === 'buses' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('buses')}
+                        >
+                            Administrar Buses
+                        </li>
+                        <li 
+                            className={`action__item ${activeSection === 'rutas' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('rutas')}
+                        >
+                            Administrar rutas
+                        </li>
+                        <li 
+                            className={`action__item ${activeSection === 'conductores' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('conductores')}
+                        >
+                            Administrar conductores
+                        </li>
+                        <li 
+                            className={`action__item ${activeSection === 'usuarios' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('usuarios')}
+                        >
+                            Administrar usuarios
+                        </li>
+                        <li 
+                            className={`action__item ${activeSection === 'asignaciones' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('asignaciones')}
+                        >
+                            Administrar asignaciones
+                        </li>
+                        <li 
+                            className={`action__item ${activeSection === 'ciudades' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('ciudades')}
+                        >
+                            Administrar ciudades
+                        </li>
+                        <li 
+                            className={`action__item ${activeSection === 'paradas' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('paradas')}
+                        >
+                            Administrar paradas
+                        </li>
+                        <li 
+                            className={`action__item ${activeSection === 'incidentes' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('incidentes')}
+                        >
+                            Administrar incidentes
+                        </li>
+                        <li 
+                            className={`action__item ${activeSection === 'tiquetes' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('tiquetes')}
+                        >
+                            Administrar tiquetes
+                        </li>
+                        <li 
+                            className={`action__item ${activeSection === 'viajes' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('viajes')}
+                        >
+                            Administrar viajes
+                        </li>
+                    </ul>
+                </div>
+                <button className="exit__btn" onClick={onClose}>Cerrar Sesion</button>
+            </aside>
+            <div className="panelInformation">
+                {renderContent()}
+            </div>
+        </div>
+    );
 }
