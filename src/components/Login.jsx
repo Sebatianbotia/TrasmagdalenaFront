@@ -1,13 +1,40 @@
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 import '../styles/Login.css';
+import { authService } from '../services/authServices';
 
 const Login = ({onClose, handleSubmit}) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [email,setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading]= useState(false)
+  const [error, setError] = useState('')
 
   const togglePasswordVisibility = () => {
+
     setShowPassword(!showPassword);
   };
 
+   const ValidateUser = async (e) => {
+    e.preventDefault()
+    console.log(email)
+    console.log(password)
+    setLoading(true)
+    try{
+        const data = await authService.login(email, password);
+
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', data.user);
+
+        console.log("todo bien", data)
+        handleSubmit();
+    } 
+    catch{
+          setError("Credenciales no validas")
+    } 
+    finally{
+      setLoading(false)
+    }
+   }
 
  
   return (
@@ -27,7 +54,7 @@ const Login = ({onClose, handleSubmit}) => {
             <p className="title">Inicio de sesion</p>
           </div>
 
-          <form className="login-form" onSubmit={handleSubmit}>
+          <form className="login-form" onSubmit={ValidateUser}>
             <div className="form-group">
               <label className="form-label">Correo electronico</label>
               <input
@@ -35,6 +62,8 @@ const Login = ({onClose, handleSubmit}) => {
                 className="form-input"
                 placeholder="xdxdlolo69@gmail.com"
                 name="username"
+                value={email}
+                onChange={(e)=>setEmail(e.target.value)}
               />
             </div>
 
@@ -46,6 +75,8 @@ const Login = ({onClose, handleSubmit}) => {
                   className="form-input password-input"
                   placeholder="hola123"
                   name="password"
+                  value={password}
+                  onChange={(e)=> setPassword(e.target.value)}
                 />
                 <button
                   type="button"
@@ -67,8 +98,8 @@ const Login = ({onClose, handleSubmit}) => {
             </div>
 
             <div className="form-actions">
-              <button type="submit" className="login-btn" onClick={handleSubmit}>
-                Ingresar
+              <button type="submit" className="login-btn" onClick={ValidateUser} disabled={loading}>
+                {loading? 'ingresando': 'Ingresar'}
               </button>
               <p className="register-text">
                 Not tiene cuenta?{' '}

@@ -6,8 +6,6 @@ import axios from 'axios';
 
 function TripsSection() {
     const [trips, setTrips] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
         loadTrips();
@@ -15,8 +13,6 @@ function TripsSection() {
 
     const loadTrips = async () => {
         try {
-            setLoading(true);
-            setError(null);
             
             console.log('Haciendo petición a la api');
             

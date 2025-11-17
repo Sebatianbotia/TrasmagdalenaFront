@@ -1,36 +1,51 @@
-import { useState } from 'react';
+import {useEffect, useState } from 'react';
 import '../../../styles/Admin/CRUD/genericStylesCrud.css';
 
 export default function AdminCities() {
-    const [cities, setCities] = useState([
-        {
-            id: 1,
-            name: 'Ciudad A',
-            lat: 10.1234,
-            lon: -74.1234,
-            stops: [
-                { id: 1, name: 'Parada 1', lat: 10.1235, lng: -74.1235 },
-                { id: 2, name: 'Parada 2', lat: 10.1236, lng: -74.1236 }
-            ]
-        },
-        {
-            id: 2,
-            name: 'Ciudad B',
-            lat: 11.5678,
-            lon: -73.5678,
-            stops: []
-        }
-    ]);
+    const [cities, setCities] = useState([]);
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const [view, setView] = useState('list');
 
     const [selectedCity, setSelectedCity] = useState(null);
+
+    const[currentPage, setCurrentPage] = useState(0);
+    const[totalPages, setTotalpages] = useState(0)
+    const[pageSize] = useState(10);
 
     const [formData, setFormData] = useState({
         name: '',
         lat: '',
         lon: ''
     });
+    useEffect(()=>{
+            fetchAssignments();
+        }, [currentPage]);// se va a ejecutar cuando cambie la pagina
+    
+        const fetchAssignments = async () => {
+            setLoading(true);
+            setError(null);
+    
+            const response = await fetch(`http://localhost:8080/api/v1/city/all?page=${currentPage}&size=${pageSize}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-type':'application/json'
+                        //Cuando implementemos el JWT (API:JS)
+                        // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                }
+            );
+            if(!response.ok){
+                throw new Error('Error al cargar las asignaciones');
+            }
+    
+            const data = await response.json(); //convertimos el response a json
+    
+            setCities(data.content); 
+            setTotalpages(data.totalPages);
+        }
 
     const handleInputChange = (e) => {
         setFormData({
