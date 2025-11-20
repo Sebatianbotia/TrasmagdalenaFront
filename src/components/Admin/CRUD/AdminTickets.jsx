@@ -1,80 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../../../styles/Admin/CRUD/genericStylesCrud.css';
 
 export default function AdminTickets() {
-    const [tickets, setTickets] = useState([
-        {
-            id: 1,
-            tripId: 1001,
-            seatHoldId: 501,
-            userId: 10,
-            originId: 1,
-            destinationId: 2,
-            seatHold: {
-                id: 501,
-                status: 'RESERVED',
-                seatNumber: 12,
-                type: 'STANDARD'
-            },
-            user: {
-                name: 'Juan Pérez',
-                email: 'juan.perez@example.com',
-                phone: '3001234567',
-                rol: 'PASSENGER'
-            },
-            origin: {
-                id: 1,
-                name: 'Terminal A',
-                city: 'Ciudad A'
-            },
-            destination: {
-                id: 2,
-                name: 'Terminal B',
-                city: 'Ciudad B'
-            },
-            price: 50000,
-            status: 'ISSUED',
-            paymentMethod: 'CASH',
-            qrCodeUrl: 'https://example.com/qr/1'
-        },
-        {
-            id: 2,
-            tripId: 1002,
-            seatHoldId: 502,
-            userId: 11,
-            originId: 1,
-            destinationId: 3,
-            seatHold: {
-                id: 502,
-                status: 'CONFIRMED',
-                seatNumber: 5,
-                type: 'PREMIUM'
-            },
-            user: {
-                name: 'María Gómez',
-                email: 'maria.gomez@example.com',
-                phone: '3009876543',
-                rol: 'PASSENGER'
-            },
-            origin: {
-                id: 1,
-                name: 'Terminal A',
-                city: 'Ciudad A'
-            },
-            destination: {
-                id: 3,
-                name: 'Terminal C',
-                city: 'Ciudad C'
-            },
-            price: 80000,
-            status: 'PAID',
-            paymentMethod: 'CARD',
-            qrCodeUrl: 'https://example.com/qr/2'
-        }
-    ]);
+    const [tickets, setTickets] = useState([]);
+        const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const [view, setView] = useState('list');
     const [selectedTicket, setSelectedTicket] = useState(null);
+    const[currentPage, setCurrentPage] = useState(0);
+    const[totalPages, setTotalpages] = useState(0);
+    const[pageSize] = useState(10);
+    //quitar update y delete, solo dejar la vista
 
     const [formData, setFormData] = useState({
         tripId: '',
@@ -86,6 +23,35 @@ export default function AdminTickets() {
         status: '',
         paymentMethod: ''
     });
+
+    useEffect(()=>{
+                fetchTickets();
+                }, [currentPage]);// se va a ejecutar cuando cambie la pagina
+        
+     const fetchTickets = async () => {
+            setLoading(true);
+            setError(null);
+    
+            const response = await fetch(`http://localhost:8080/api/v1/ticket/all?page=${currentPage}&size=${pageSize}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-type':'application/json'
+                        //Cuando implementemos el JWT (API:JS)
+                        // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                }
+            );
+            if(!response.ok){
+                throw new Error('Error al cargar las asignaciones');
+            }
+    
+            const data = await response.json(); //convertimos el response a json
+    
+            setTickets(data.content); 
+            setTotalpages(data.totalPages);
+        }
+    
 
     const handleInputChange = (e) => {
         setFormData({

@@ -1,48 +1,17 @@
-import { useState } from 'react';
+import { useEffect,useState } from 'react';
 import '../../../styles/Admin/CRUD/genericStylesCrud.css';
 
 export default function AdminTrips() {
-    const [trips, setTrips] = useState([
-        {
-            id: 1,
-            busId: 1,
-            routeId: 10,
-            date: '2025-11-20',
-            departureAt: '2025-11-20T08:00',
-            arrivalAt: '2025-11-20T11:00',
-            fareRuleId: 100,
-            // Campos de tripResponse
-            origin: 'Ciudad A',
-            destination: 'Ciudad B',
-            departTime: '2025-11-20T08:00',
-            arriveTime: '2025-11-20T11:00',
-            price: 50000,
-            status: 'SCHEDULED',
-            busPlate: 'ABC123',
-            // tripResponseWithSeatAvailable
-            seatAvailable: 20
-        },
-        {
-            id: 2,
-            busId: 2,
-            routeId: 11,
-            date: '2025-11-21',
-            departureAt: '2025-11-21T09:00',
-            arrivalAt: '2025-11-21T12:30',
-            fareRuleId: 101,
-            origin: 'Ciudad B',
-            destination: 'Ciudad C',
-            departTime: '2025-11-21T09:00',
-            arriveTime: '2025-11-21T12:30',
-            price: 65000,
-            status: 'SCHEDULED',
-            busPlate: 'DEF456',
-            seatAvailable: 15
-        }
-    ]);
+    const [trips, setTrips] = useState([]);
+        const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const [view, setView] = useState('list');
     const [selectedTrip, setSelectedTrip] = useState(null);
+
+     const[currentPage, setCurrentPage] = useState(0);
+    const[totalPages, setTotalpages] = useState(0)
+    const[pageSize] = useState(20);
 
     const [formData, setFormData] = useState({
         busId: '',
@@ -53,6 +22,34 @@ export default function AdminTrips() {
         tripStatus: '',
         fareRuleId: ''
     });
+
+    useEffect(()=>{
+            fetchTrips();
+        }, [currentPage]);// se va a ejecutar cuando cambie la pagina
+    
+    const fetchTrips = async () => {
+            setLoading(true);
+            setError(null);
+    
+            const response = await fetch(`http://localhost:8080/api/v1/trip/all?page=${currentPage}&size=${pageSize}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-type':'application/json'
+                        //Cuando implementemos el JWT (API:JS)
+                        // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                }
+            );
+            if(!response.ok){
+                throw new Error('Error al cargar las asignaciones');
+            }
+    
+            const data = await response.json(); //convertimos el response a json
+    
+            setTrips(data.content); 
+            setTotalpages(data.totalPages);
+        }
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -73,32 +70,43 @@ export default function AdminTrips() {
             fareRuleId: ''
         });
     };
+    const handleAdd = async () => {
+            try{
+                        // Convertir datetime-local a OffsetDateTime con zona horaria
+            const response = await fetch('http://localhost:8080/api/v1/trip/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData) // JSON.stringify(formData)
+            });
 
-    const handleAdd = () => {
-        const newTrip = {
-            id: trips.length + 1,
-            busId: formData.busId ? Number(formData.busId) : null,
-            routeId: formData.routeId ? Number(formData.routeId) : null,
-            date: formData.date,
-            departureAt: formData.departureAt,
-            arrivalAt: formData.arrivalAt,
-            fareRuleId: formData.fareRuleId ? Number(formData.fareRuleId) : null,
-            // tripResponse (lo real vendrá del backend, acá mockeamos lo mínimo)
-            origin: '',
-            destination: '',
-            departTime: formData.departureAt,
-            arriveTime: formData.arrivalAt,
-            price: 0,
-            status: formData.tripStatus,
-            busPlate: '',
-            // tripResponseWithSeatAvailable
-            seatAvailable: 0
-        };
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Datos no válidos");
+            }
 
-        setTrips([...trips, newTrip]);
-        resetForm();
-        setView('list');
-    };
+             const data = await response.json();
+             setTrips([...trips, data]);
+
+             setFormData({
+                busId: '',
+                routeId: '',
+                date: '',
+                departureAt: '',
+                arrivalAt: '',
+                tripStatus: '',
+                fareRuleId: ''
+             });
+        
+            setView('list');
+        
+     } catch (error) {
+         console.error('Error al crear el viaje:', error);
+         alert('Error: ' + error.message);
+     }
+
+     };
 
     const handleEdit = (trip) => {
         setSelectedTrip(trip);
@@ -114,32 +122,62 @@ export default function AdminTrips() {
         setView('edit');
     };
 
-    const handleUpdate = () => {
-        setTrips(
-            trips.map(t =>
-                t.id === selectedTrip.id
-                    ? {
-                        ...selectedTrip,
-                        busId: formData.busId ? Number(formData.busId) : null,
-                        routeId: formData.routeId ? Number(formData.routeId) : null,
-                        date: formData.date,
-                        departureAt: formData.departureAt,
-                        arrivalAt: formData.arrivalAt,
-                        fareRuleId: formData.fareRuleId ? Number(formData.fareRuleId) : null,
-                        departTime: formData.departureAt,
-                        arriveTime: formData.arrivalAt,
-                        status: formData.tripStatus
-                    }
-                    : t
+    const handleUpdate = async () => {
+        try{
+            const response = await fetch(`http://localhost:8080/api/v1/trip/update/${selectedTrip.id}`,
+                {
+                    method:'PATCH',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body:JSON.stringify(formData)
+                }
             )
-        );
-        resetForm();
-        setView('list');
+            if(!response.ok){
+                const errorData = await response.json
+                throw new Error(errorData.message || "Error al actualizar")
+            }
+            console.log (formData)
+    
+            setFormData({
+                busId: '',
+                routeId: '',
+                date: '',
+                departureAt: '',
+                arrivalAt: '',
+                tripStatus: '',
+                fareRuleId: ''
+            });
+
+            fetchCities();
+            setView('list');
+        }
+        catch(error){
+            console.error('Error:',error.message);
+            alert("Error: " + error.message)
+        }
     };
 
-    const handleDelete = (id) => {
-        if (window.confirm('¿Está seguro de eliminar este viaje?')) {
-            setTrips(trips.filter(t => t.id !== id));
+const handleDelete = async (id) => {
+        if (window.confirm('¿Está seguro de eliminar esta ciudad?')) {
+            try{
+                const response = await fetch (`http://localhost:8080/api/v1/trip/delete/${id}`,
+                    {
+                        method: 'DELETE',
+                        headers:{
+                            'Content-Type':'application/json'
+                        }
+                    }
+                )
+                if(!response.ok){
+                    throw new Error("No se pudo eliminar hp")
+                }
+                fetchAssignments();
+            }
+            catch(error){
+                console.error('Error: '+ error.message);
+                alert('Error: '+ error.message);
+            }
         }
     };
 

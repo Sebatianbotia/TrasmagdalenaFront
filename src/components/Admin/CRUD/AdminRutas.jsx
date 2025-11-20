@@ -1,57 +1,51 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../../../styles/Admin/CRUD/genericStylesCrud.css';
 
 export default function AdminRutas() {
-    const [routes, setRoutes] = useState([
-        {
-            id: 1,
-            code: 'R-001',
-            originId: 1,
-            destinationId: 2,
-            origin: 'Ciudad A',
-            destination: 'Ciudad B',
-            distanceKm: '120',
-            durationTime: '02:30',
-            routeStops: [
-                {
-                    id: 1,
-                    stopOrder: 1,
-                    origin: 'Ciudad A',
-                    destination: 'Parada 1',
-                    price: 15000,
-                    isDinamycPricing: false
-                },
-                {
-                    id: 2,
-                    stopOrder: 2,
-                    origin: 'Parada 1',
-                    destination: 'Ciudad B',
-                    price: 20000,
-                    isDinamycPricing: true
-                }
-            ]
-        },
-        {
-            id: 2,
-            code: 'R-002',
-            originId: 2,
-            destinationId: 3,
-            origin: 'Ciudad B',
-            destination: 'Ciudad C',
-            distanceKm: '80',
-            durationTime: '01:45',
-            routeStops: []
-        }
-    ]);
+    const [routes, setRoutes] = useState([]);
+        const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const [view, setView] = useState('list');
     const [selectedRoute, setSelectedRoute] = useState(null);
+
+     const[currentPage, setCurrentPage] = useState(0);
+    const[totalPages, setTotalpages] = useState(0)
+    const[pageSize] = useState(10);
 
     const [formData, setFormData] = useState({
         code: '',
         originId: '',
         destinationId: ''
     });
+
+        useEffect(()=>{
+        fetchRoutes();
+    }, [currentPage]);// se va a ejecutar cuando cambie la pagina
+
+    const fetchRoutes = async () => {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch(`http://localhost:8080/api/v1/route/all?page=${currentPage}&size=${pageSize}`,
+            {
+                method: 'GET',
+                headers: {
+                    'Content-type':'application/json'
+                    //Cuando implementemos el JWT (API:JS)
+                    // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            }
+        );
+        if(!response.ok){
+            throw new Error('Error al cargar las asignaciones');
+        }
+
+        const data = await response.json(); //convertimos el response a json
+
+        setRoutes(data.content); 
+        setTotalpages(data.totalPages);
+    }
 
     const handleInputChange = (e) => {
         setFormData({
@@ -60,25 +54,39 @@ export default function AdminRutas() {
         });
     };
 
-    const handleAdd = () => {
-        setRoutes([
-            ...routes,
-            {
-                id: routes.length + 1,
-                code: formData.code,
-                originId: Number(formData.originId),
-                destinationId: Number(formData.destinationId),
-                // En la vida real origin/destination/distance/duration vendrían del backend
-                origin: '',
-                destination: '',
-                distanceKm: '',
-                durationTime: '',
-                routeStops: []
-            }
-        ]);
-        setFormData({ code: '', originId: '', destinationId: '' });
-        setView('list');
-    };
+// const handleAdd = async () => {
+//         try{
+//                     // Convertir datetime-local a OffsetDateTime con zona horaria
+//         const response = await fetch('http://localhost:8080/api/v1/route/create', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify(formData) // JSON.stringify(formData)
+//         });
+
+//         if (!response.ok) {
+//             const errorData = await response.json();
+//             throw new Error(errorData.message || "Datos no válidos");
+//         }
+
+//         const data = await response.json();
+//         setRoutes([...routes, data]);
+
+//         setFormData({
+//             code: '',
+//             originId: '',
+//             destinationId: ''
+//         });
+        
+//         setView('list');
+        
+//     } catch (error) {
+//         console.error('Error al crear la ruta:', error);
+//         alert('Error: ' + error.message);
+//     }
+
+//     };
 
     const handleEdit = (route) => {
         setSelectedRoute(route);
@@ -90,22 +98,36 @@ export default function AdminRutas() {
         setView('edit');
     };
 
-    const handleUpdate = () => {
-        setRoutes(
-            routes.map(r =>
-                r.id === selectedRoute.id
-                    ? {
-                        ...selectedRoute,
-                        code: formData.code,
-                        originId: Number(formData.originId),
-                        destinationId: Number(formData.destinationId)
-                    }
-                    : r
-            )
-        );
-        setFormData({ code: '', originId: '', destinationId: '' });
-        setView('list');
-    };
+
+    // const handleUpdate = async () => {
+    //     try{
+    //         const response = await fetch(`http://localhost:8080/api/v1/route/update/${selectedRoute.id}`,
+    //             {
+    //                 method:'PATCH',
+    //                 headers:{
+    //                     'Content-Type': 'application/json'
+    //                 },
+    //                 body:JSON.stringify(formData)
+    //             }
+    //         )
+    //         if(!response.ok){
+    //             const errorData = await response.json
+    //             throw new Error(errorData.message || "Error al actualizar")
+    //         }
+    
+    //         setFormData({
+    //              code: '',
+    //             originId: '',
+    //             destinationId: ''
+    //         });
+    //         fetchRoutes();
+    //         setView('list');
+    //     }
+    //     catch(error){
+    //         console.error('Error:',error.message);
+    //         alert("Error: " + error.message)
+    //     }
+    // };
 
     const handleDelete = (id) => {
         if (window.confirm('¿Está seguro de eliminar esta ruta?')) {

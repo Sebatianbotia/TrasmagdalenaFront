@@ -318,15 +318,15 @@ export default function AdminAssignments() {
                             </div>
                             <div className="detail-item">
                                 <span className="detail-label">ID Viaje (trip):</span>
-                                <span className="detail-value">{selectedAssignment.tripId}</span>
+                                <span className="detail-value">{selectedAssignment.trip.id}</span>
                             </div>
                             <div className="detail-item">
-                                <span className="detail-label">ID Conductor (driver):</span>
-                                <span className="detail-value">{selectedAssignment.driverId}</span>
+                                <span className="detail-label">Conductor: </span>
+                                <span className="detail-value">{selectedAssignment.driver.name}</span>
                             </div>
                             <div className="detail-item">
-                                <span className="detail-label">ID Despachador (dispatcher):</span>
-                                <span className="detail-value">{selectedAssignment.dispatcherId}</span>
+                                <span className="detail-label">Despachador:</span>
+                                <span className="detail-value">{selectedAssignment.dispatcher.name}</span>
                             </div>
                             <div className="detail-item">
                                 <span className="detail-label">Checklist:</span>

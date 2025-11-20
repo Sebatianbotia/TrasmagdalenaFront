@@ -1,0 +1,173 @@
+.ticket-container {
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+.ticket {
+    border: 2px solid #333;
+    border-radius: 12px;
+    padding: 20px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+.ticket-header {
+    text-align: center;
+    border-bottom: 2px dashed #ddd;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.ticket-header h2 {
+    margin: 0;
+    color: #2c5aa0;
+    font-size: 24px;
+}
+
+.ticket-number {
+    color: #666;
+    font-size: 14px;
+    margin-top: 5px;
+    display: block;
+}
+
+.ticket-route {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.origin, .destination {
+    color: #333;
+}
+
+.arrow {
+    margin: 0 15px;
+    color: #2c5aa0;
+    font-weight: bold;
+}
+
+.ticket-details {
+    margin: 20px 0;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.label {
+    font-weight: bold;
+    color: #555;
+}
+
+.value {
+    color: #333;
+}
+
+.value.price {
+    font-weight: bold;
+    color: #2c5aa0;
+    font-size: 16px;
+}
+
+.status {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status-sold {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-no_show {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.ticket-qr {
+    text-align: center;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.qr-image {
+    width: 150px;
+    height: 150px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.qr-label {
+    margin-top: 10px;
+    color: #666;
+    font-size: 14px;
+}
+
+.ticket-footer {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 2px dashed #ddd;
+}
+
+.download-btn {
+    background-color: #2c5aa0;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.download-btn:hover {
+    background-color: #1e3d6f;
+}
+
+/* Estilos para el modal de tickets */
+.tickets-modal {
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.tickets-container {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    margin: 20px 0;
+}
+
+@media (max-width: 768px) {
+    .tickets-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .ticket-container {
+        max-width: 100%;
+    }
+}

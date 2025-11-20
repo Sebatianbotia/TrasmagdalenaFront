@@ -11,6 +11,7 @@ import AdminStops from "./CRUD/AdminStops"
 import AdminTickets from "./CRUD/AdminTickets"
 import AdminTrips from "./CRUD/AdminTrips"
 import AdminUsers from "./CRUD/AdminUsers"
+import AdminParcels from "./CRUD/AdminParcels"
 
 export default function Panel({onClose}) {
     const [activeSection, setActiveSection] = useState('dashboard');
@@ -28,6 +29,7 @@ export default function Panel({onClose}) {
             case 'incidentes': return <AdminIncidents />;
             case 'tiquetes': return <AdminTickets />;
             case 'viajes': return <AdminTrips />;
+            case 'parcels': return <AdminParcels />;
             default: return <Dashboard />;
         }
     };
@@ -88,6 +90,12 @@ export default function Panel({onClose}) {
                             onClick={() => setActiveSection('paradas')}
                         >
                             Administrar paradas
+                        </li>
+                        <li 
+                            className={`action__item ${activeSection === 'parcels' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('parcels')}
+                        >
+                            Administrar parcels
                         </li>
                         <li 
                             className={`action__item ${activeSection === 'incidentes' ? 'active' : ''}`}

@@ -1,29 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../../../styles/Admin/CRUD/genericStylesCrud.css';
 
 export default function AdminStops() {
-    const [stops, setStops] = useState([
-        {
-            id: 1,
-            name: 'Terminal Principal',
-            cityId: 1,
-            city: { name: 'Ciudad A' },
-            lat: 10.1234,
-            lng: -74.1234
-        },
-        {
-            id: 2,
-            name: 'Parada Centro',
-            cityId: 2,
-            city: { name: 'Ciudad B' },
-            lat: 11.5678,
-            lng: -73.5678
-        }
-    ]);
+    const [stops, setStops] = useState([]);
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const [view, setView] = useState('list');
     const [selectedStop, setSelectedStop] = useState(null);
-
+    
+    const[currentPage, setCurrentPage] = useState(0);
+    const[totalPages, setTotalpages] = useState(0)
+    const[pageSize] = useState(20);
     const [formData, setFormData] = useState({
         name: '',
         cityId: '',
@@ -31,28 +19,71 @@ export default function AdminStops() {
         lng: ''
     });
 
+        useEffect(()=>{
+                fetchStops();
+            }, [currentPage]);
+    const fetchStops = async () => {
+        setLoading(true);
+        setError(null);
+    
+        const response = await fetch(`http://localhost:8080/api/v1/stop/all?page=${currentPage}&size=${pageSize}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-type':'application/json'
+                        //Cuando implementemos el JWT (API:JS)
+                        // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                }
+            );
+            if(!response.ok){
+                throw new Error('Error al cargar las asignaciones');
+            }
+        
+            const data = await response.json(); //convertimos el response a json
+        
+            setStops(data.content); 
+            setTotalpages(data.totalPages);
+    }
+
+
     const handleInputChange = (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
         });
     };
+        const handleAdd = async () => {
+            try{
+            const response = await fetch('http://localhost:8080/api/v1/stop/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData) // JSON.stringify(formData)
+            });
 
-    const handleAdd = () => {
-        setStops([
-            ...stops,
-            {
-                id: stops.length + 1,
-                name: formData.name,
-                cityId: Number(formData.cityId),
-                city: { name: '' }, // el nombre real vendrá del backend
-                lat: Number(formData.lat),
-                lng: Number(formData.lng)
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Datos no válidos");
             }
-        ]);
-        setFormData({ name: '', cityId: '', lat: '', lng: '' });
-        setView('list');
-    };
+
+             const data = await response.json();
+             setStops([...stops, data]);
+
+            setFormData({ name: '', cityId: '', lat: '', lng: '' });
+
+        
+            setView('list');
+        
+            } catch (error) {
+                console.error('Error al crear la ciudad:', error);
+                alert('Error: ' + error.message);
+            }
+
+     };
+
+
 
     const handleEdit = (stop) => {
         setSelectedStop(stop);
@@ -64,28 +95,56 @@ export default function AdminStops() {
         });
         setView('edit');
     };
-
-    const handleUpdate = () => {
-        setStops(
-            stops.map(s =>
-                s.id === selectedStop.id
-                    ? {
-                        ...selectedStop,
-                        name: formData.name,
-                        cityId: Number(formData.cityId),
-                        lat: Number(formData.lat),
-                        lng: Number(formData.lng)
-                    }
-                    : s
+    const handleUpdate = async () => {
+        try{
+            const response = await fetch(`http://localhost:8080/api/v1/stop/update/${selectedStop.id}`,
+                {
+                    method:'PATCH',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body:JSON.stringify(formData)
+                }
             )
-        );
-        setFormData({ name: '', cityId: '', lat: '', lng: '' });
-        setView('list');
+            if(!response.ok){
+                const errorData = await response.json
+                throw new Error(errorData.message || "Error al actualizar")
+            }
+            console.log (formData)
+    
+            setFormData({ name: '', cityId: '', lat: '', lng: '' });
+
+
+            fetchStops();
+            setView('list');
+        }
+        catch(error){
+            console.error('Error:',error.message);
+            alert("Error: " + error.message)
+        }
     };
 
-    const handleDelete = (id) => {
+
+      const handleDelete = async (id) => {
         if (window.confirm('¿Está seguro de eliminar esta parada?')) {
-            setStops(stops.filter(s => s.id !== id));
+            try{
+                const response = await fetch (`http://localhost:8080/api/v1/stop/delete/${id}`,
+                    {
+                        method: 'DELETE',
+                        headers:{
+                            'Content-Type':'application/json'
+                        }
+                    }
+                )
+                if(!response.ok){
+                    throw new Error("No se pudo eliminar hp")
+                }
+                fetchAssignments();
+            }
+            catch(error){
+                console.error('Error: '+ error.message);
+                alert('Error: '+ error.message);
+            }
         }
     };
 

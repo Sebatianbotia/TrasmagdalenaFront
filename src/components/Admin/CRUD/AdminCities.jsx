@@ -20,10 +20,10 @@ export default function AdminCities() {
         lon: ''
     });
     useEffect(()=>{
-            fetchAssignments();
+            fetchCities();
         }, [currentPage]);// se va a ejecutar cuando cambie la pagina
     
-        const fetchAssignments = async () => {
+    const fetchCities = async () => {
             setLoading(true);
             setError(null);
     
@@ -53,19 +53,39 @@ export default function AdminCities() {
             [e.target.name]: e.target.value
         });
     };
+    const handleAdd = async () => {
+            try{
+                        // Convertir datetime-local a OffsetDateTime con zona horaria
+            const response = await fetch('http://localhost:8080/api/v1/city/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData) // JSON.stringify(formData)
+            });
 
-    const handleAdd = () => {
-        setCities([
-            ...cities,
-            {
-                ...formData,
-                id: cities.length + 1,
-                stops: []
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Datos no válidos");
             }
-        ]);
-        setFormData({ name: '', lat: '', lon: '' });
-        setView('list');
-    };
+
+             const data = await response.json();
+             setCities([...cities, data]);
+
+             setFormData({
+                name: '',
+                lat: '',
+                lon: ''
+             });
+        
+            setView('list');
+        
+     } catch (error) {
+         console.error('Error al crear la ciudad:', error);
+         alert('Error: ' + error.message);
+     }
+
+     };
 
     const handleEdit = (city) => {
         setSelectedCity(city);
@@ -77,23 +97,61 @@ export default function AdminCities() {
         setView('edit');
     };
 
-    const handleUpdate = () => {
-        setCities(
-            cities.map(c =>
-                c.id === selectedCity.id
-                    ? { ...selectedCity, ...formData }
-                    : c
+    const handleUpdate = async () => {
+        try{
+            const response = await fetch(`http://localhost:8080/api/v1/city/update/${selectedCity.id}`,
+                {
+                    method:'PATCH',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body:JSON.stringify(formData)
+                }
             )
-        );
-        setFormData({ name: '', lat: '', lon: '' });
-        setView('list');
-    };
+            if(!response.ok){
+                const errorData = await response.json
+                throw new Error(errorData.message || "Error al actualizar")
+            }
+            console.log (formData)
+    
+            setFormData({
+                name: '',
+                lat: '',
+                lon: ''
+            });
 
-    const handleDelete = (id) => {
-        if (window.confirm('¿Está seguro de eliminar esta ciudad?')) {
-            setCities(cities.filter(c => c.id !== id));
+            fetchCities();
+            setView('list');
+        }
+        catch(error){
+            console.error('Error:',error.message);
+            alert("Error: " + error.message)
         }
     };
+
+      const handleDelete = async (id) => {
+        if (window.confirm('¿Está seguro de eliminar esta ciudad?')) {
+            try{
+                const response = await fetch (`http://localhost:8080/api/v1/city/delete/${id}`,
+                    {
+                        method: 'DELETE',
+                        headers:{
+                            'Content-Type':'application/json'
+                        }
+                    }
+                )
+                if(!response.ok){
+                    throw new Error("No se pudo eliminar hp")
+                }
+                fetchAssignments();
+            }
+            catch(error){
+                console.error('Error: '+ error.message);
+                alert('Error: '+ error.message);
+            }
+        }
+    };
+
 
     const handleDetail = (city) => {
         setSelectedCity(city);
