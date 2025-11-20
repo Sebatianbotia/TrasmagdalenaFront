@@ -12,8 +12,7 @@ export const authService = {
         if(!response.ok){
             throw new Error("Credenciales invalidas")
         }
-
-        return await response.json
+        return await response.json();
     },
 
     logout(){

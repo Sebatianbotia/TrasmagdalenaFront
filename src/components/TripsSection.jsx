@@ -5,6 +5,10 @@ import FindBus from "./FindBus";
 import axios from 'axios';
 
 function TripsSection() {
+    const usStr = localStorage.getItem('user');
+    const us = JSON.parse(usStr)
+    console.log("user", us);
+    
      const [route, setRoute] = useState({
         origin: null,
         destination: null,
@@ -30,7 +34,7 @@ const loadTrips = async () => {
         const response = await axios.get(
             `http://localhost:8080/api/v1/trip/find?origin=${route.origin.id}&destination=${route.destination.id}&date=${route.date}&userRols=PASSENGER&page=0&size=10`
         );
-        console.log('Respuesta completa:', response.data);
+        console.log('Respuesta completa:', response);
         
         const content = response.data.content;
         

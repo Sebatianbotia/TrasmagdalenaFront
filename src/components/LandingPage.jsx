@@ -4,10 +4,13 @@ import TripsSection from "./TripsSection";
 import '../styles/LandingPage.css'
 import Panel from "./Admin/Panel";
 
-export default function LandingPage({onLoginClick}) {
+export default function LandingPage({onLoginClick, userRole, user}) {
+    const usStr = localStorage.getItem('user');
+    const us = JSON.parse(usStr)
+    console.log(us);
     return (
         <div className="landingPage">
-            <Header onLoginClick={onLoginClick}/>
+            <Header onLoginClick={onLoginClick} user = {us}/>
             <NavBar/>
             <TripsSection/> 
         </div>

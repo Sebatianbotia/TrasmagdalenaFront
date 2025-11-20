@@ -1,6 +1,6 @@
 import "../styles/header.css"
 
-const Header = ({onLoginClick}) => {
+const Header = ({onLoginClick, user}) => {
   return (
     <header className="header">
       <div className="header-container">
@@ -37,7 +37,7 @@ const Header = ({onLoginClick}) => {
               Ayuda
             </a>
             <button className="login-button" onClick={onLoginClick}>
-              <span>Iniciar Sesión</span>
+              <span>{user?(user.name):"Iniciar Sesión"}</span>
             </button>
           </nav>
         </div>
