@@ -33,8 +33,9 @@ export default function AdminAdmin() {
             const response = await fetch(`http://localhost:8080/api/v1/user/find/type?rol=ADMIN&page=${currentPage}&size=${pageSize}`, {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json'
-                }
+                    'Content-type':'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
             });
 
             if (!response.ok) {
@@ -72,7 +73,8 @@ export default function AdminAdmin() {
             const response = await fetch('http://localhost:8080/api/v1/user/create', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-type':'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
                 body: JSON.stringify(adminData)
             });
@@ -125,8 +127,9 @@ export default function AdminAdmin() {
 
             const response = await fetch(`http://localhost:8080/api/v1/user/update/${selectedAdmin.id}`, {
                 method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json'
+                 headers: {
+                    'Content-type':'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
                 body: JSON.stringify(adminData)
             });
@@ -157,8 +160,9 @@ export default function AdminAdmin() {
                 const response = await fetch(`http://localhost:8080/api/v1/user/delete/${id}`, {
                     method: 'DELETE',
                     headers: {
-                        'Content-Type': 'application/json'
-                    }
+                    'Content-type':'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
                 });
 
                 if (!response.ok) {

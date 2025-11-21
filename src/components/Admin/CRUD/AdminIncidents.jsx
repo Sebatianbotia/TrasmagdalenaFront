@@ -33,8 +33,9 @@ export default function AdminIncidents() {
             const response = await fetch(`http://localhost:8080/api/v1/incident/all?page=${currentPage}&size=${pageSize}`, {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json'
-                }
+                    'Content-type':'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
             });
 
             if (!response.ok) {
@@ -73,7 +74,8 @@ export default function AdminIncidents() {
             const response = await fetch('http://localhost:8080/api/v1/incident/create', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-type':'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
                 body: JSON.stringify(incidentData)
             });
@@ -127,7 +129,8 @@ export default function AdminIncidents() {
             const response = await fetch(`http://localhost:8080/api/v1/incident/update/${selectedIncident.id}`, {
                 method: 'PATCH',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-type':'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
                 body: JSON.stringify(incidentData)
             });

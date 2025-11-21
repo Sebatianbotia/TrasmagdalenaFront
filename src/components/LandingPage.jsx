@@ -7,12 +7,15 @@ import Panel from "./Admin/Panel";
 export default function LandingPage({onLoginClick, user, onLogout}) {
     const usStr = localStorage.getItem('user');
     const us = JSON.parse(usStr)
-    console.log(us);
+    // console.log(us);
+    // const usTkn = JSON.parse(localStorage.getItem('token'));
+    // console.log(usTkn);
+
     return (
         <div className="landingPage">
             <Header onLoginClick={onLoginClick} user = {us} onCloseSesionClick={onLogout}/>
             <NavBar/>
-            <TripsSection/> 
+            <TripsSection onLoginClick={onLoginClick}/> 
         </div>
     );
 }

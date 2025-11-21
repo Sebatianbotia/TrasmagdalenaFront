@@ -4,7 +4,7 @@ import '../styles/TripSection.css';
 import FindBus from "./FindBus";
 import axios from 'axios';
 
-function TripsSection() {
+function TripsSection({onLoginClick}) {
     const usStr = localStorage.getItem('user');
     const us = JSON.parse(usStr)
     console.log("user", us);
@@ -161,6 +161,7 @@ const loadTrips = async () => {
                     }
                     originId={route.origin.id}
                     destinationId={route.destination.id}
+                    onLoginclick={onLoginClick}
                 />
             ))}
         </div>

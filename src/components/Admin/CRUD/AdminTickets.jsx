@@ -36,10 +36,9 @@ export default function AdminTickets() {
                 {
                     method: 'GET',
                     headers: {
-                        'Content-type':'application/json'
-                        //Cuando implementemos el JWT (API:JS)
-                        // 'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
+                        'Content-type':'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
                 }
             );
             if(!response.ok){

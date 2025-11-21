@@ -36,8 +36,9 @@ const Header = ({ onLoginClick, user, onCloseSesionClick }) => {
         {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json',
-          }
+                    'Content-type':'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
         }
       );
 

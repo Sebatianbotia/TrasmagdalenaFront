@@ -46,9 +46,9 @@ export default function AdminParcels() {
         {
           method: "GET",
           headers: {
-            "Content-type": "application/json"
-            // 'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
+                    'Content-type':'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
         }
       );
 
@@ -98,7 +98,10 @@ export default function AdminParcels() {
 
       const res = await fetch("http://localhost:8080/api/v1/parcel/create", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+                    'Content-type':'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
         body: JSON.stringify(payload)
       });
 
@@ -182,7 +185,10 @@ export default function AdminParcels() {
         `http://localhost:8080/api/v1/parcel/update/${selectedParcel.id}`,
         {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+                    'Content-type':'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
           body: JSON.stringify(payload)
         }
       );

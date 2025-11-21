@@ -24,16 +24,49 @@ export default function Dashboard() {
         setError(null);
 
         try {
-            // Hacer todas las peticiones en paralelo
+
             const [busesRes, routesRes, driversRes, passengersRes, dispatchersRes] = await Promise.all([
-                fetch('http://localhost:8080/api/v1/bus/count'),
-                fetch('http://localhost:8080/api/v1/route/count'),
-                fetch('http://localhost:8080/api/v1/user/count/DRIVER'),
-                fetch('http://localhost:8080/api/v1/user/count/PASSENGER'),
-                fetch('http://localhost:8080/api/v1/user/count/DISPATCHER')
+                fetch('http://localhost:8080/api/v1/bus/count', 
+                    {
+                        headers: {
+                                'Content-type':'application/json',
+                                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    }
+                ),
+                fetch('http://localhost:8080/api/v1/route/count',
+                    {
+                        headers: {
+                    'Content-type':'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+                    }
+                ),
+                fetch('http://localhost:8080/api/v1/user/count/DRIVER', {
+                    headers: {
+                    'Content-type':'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                }),
+                fetch('http://localhost:8080/api/v1/user/count/PASSENGER',
+                    {
+                        headers: {
+                        'Content-type':'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    }
+                ),
+                fetch('http://localhost:8080/api/v1/user/count/DISPATCHER',
+                    {
+                        headers: {
+                            'Content-type':'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    }
+                )
             ]);
 
-            // Verificar que todas las respuestas sean exitosas
+
             if (!busesRes.ok || !routesRes.ok || !driversRes.ok || !passengersRes.ok || !dispatchersRes.ok) {
                 console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
                 throw new Error('Error al obtener datos del servidor');

@@ -35,10 +35,9 @@ export default function AdminTrips() {
                 {
                     method: 'GET',
                     headers: {
-                        'Content-type':'application/json'
-                        //Cuando implementemos el JWT (API:JS)
-                        // 'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
+                        'Content-type':'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
                 }
             );
             if(!response.ok){
@@ -76,7 +75,8 @@ export default function AdminTrips() {
             const response = await fetch('http://localhost:8080/api/v1/trip/create', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-type':'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
                 body: JSON.stringify(formData) // JSON.stringify(formData)
             });
@@ -127,8 +127,9 @@ export default function AdminTrips() {
             const response = await fetch(`http://localhost:8080/api/v1/trip/update/${selectedTrip.id}`,
                 {
                     method:'PATCH',
-                    headers:{
-                        'Content-Type': 'application/json'
+                    headers: {
+                        'Content-type':'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
                     body:JSON.stringify(formData)
                 }
@@ -164,9 +165,10 @@ const handleDelete = async (id) => {
                 const response = await fetch (`http://localhost:8080/api/v1/trip/delete/${id}`,
                     {
                         method: 'DELETE',
-                        headers:{
-                            'Content-Type':'application/json'
-                        }
+                        headers: {
+                            'Content-type':'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        },
                     }
                 )
                 if(!response.ok){

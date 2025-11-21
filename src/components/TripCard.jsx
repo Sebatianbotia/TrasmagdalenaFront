@@ -17,7 +17,8 @@ export default function TripCard({
   seatsAvailable,
   onSeeSeats,
   originId,
-  destinationId
+  destinationId,
+  onLoginclick
 }) {
   
   const [showSeatSelector, setShowSeatSelector] = useState(false);
@@ -36,14 +37,17 @@ export default function TripCard({
   }).format(price);
 
   const getSeats = async () => {
+    if(!localStorage.getItem('user')){
+      alert("Debes iniciar sesion para ver los asientos disponibles")
+      onLoginclick();
+    }
     try {
       const response = await fetch(`http://localhost:8080/api/v1/trip/${tripId}/seats`, {
         method: 'GET',
         headers: {
-          'Content-type': 'application/json'
-          //Cuando implementemos el JWT (API:JS)
-          // 'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+                    'Content-type':'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
       });
       
       if (!response.ok) {
@@ -64,10 +68,9 @@ export default function TripCard({
       const response = await fetch(`http://localhost:8080/api/v1/trip/${tripId}/seatsHold`, {
         method: 'GET',
         headers: {
-          'Content-type': 'application/json'
-          //Cuando implementemos el JWT (API:JS)
-          // 'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+                    'Content-type':'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
       });
       
       if (!response.ok) {

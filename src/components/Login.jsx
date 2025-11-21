@@ -28,10 +28,11 @@ const Login = ({ onClose, onLoginSuccess, onOpenRegister }) => {
     try {
       const data = await authService.login(email, password);
 
-      localStorage.setItem('token', data.token);
+      localStorage.setItem('token', data.accessToken);
       localStorage.setItem('user', JSON.stringify(data.user));
       
       console.log("Login exitoso", data.user);
+      console.log("Token:",  data.accessToken);
       console.log("Rol del usuario:", data.user.rol);
       
       onLoginSuccess(data.user.rol, data.user);
