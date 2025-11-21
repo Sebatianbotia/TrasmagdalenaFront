@@ -139,7 +139,7 @@ export default function AdminStops() {
                 if(!response.ok){
                     throw new Error("No se pudo eliminar hp")
                 }
-                fetchAssignments();
+                fetchStops();
             }
             catch(error){
                 console.error('Error: '+ error.message);

@@ -6,14 +6,14 @@ export default function NavBar() {
         <h1 >Buses Intermunicipales</h1>
             <nav className='nav-bar'>
                 <ul className='nav'>
-                    <li className='nav__item'>
-                        <a className= 'item--text' href='#'>Viajes</a>
+                    <li className='nav__item focused'>
+                        <a className= 'item--text ' href='#'>Viajes</a>
                     </li>
                     <li className='nav__item'>
-                        <a  className= 'item--text' href='holamundo.html' >Encomiendas</a>
+                        <a  className= 'item--text' onClick={()=>alert("Pronto disponible...")} >Encomiendas</a>
                     </li>
                     <li className='nav__item'>
-                        <a className= 'item--text' href='#'>Despachos</a>
+                        <a className= 'item--text' onClick={()=>alert("Pronto disponible...")}>Despachos</a>
                     </li>
                 </ul>
             </nav>

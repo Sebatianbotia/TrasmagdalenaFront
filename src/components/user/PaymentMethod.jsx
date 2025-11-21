@@ -8,6 +8,9 @@ function PaymentMethod({ isOpen, onClose, dataToSendForTickets, selectedSeats })
     const [showPaymentGateway, setShowPaymentGateway] = useState(false);
     const [generatedTickets, setGeneratedTickets] = useState([]);
     const [showTickets, setShowTickets] = useState(false);
+    const usStr = localStorage.getItem('user');
+    const us = JSON.parse(usStr)
+    console.log("user", us);
 
     if (!isOpen) return null;
 
@@ -33,14 +36,15 @@ function PaymentMethod({ isOpen, onClose, dataToSendForTickets, selectedSeats })
             icon: '💳'
         }
     ];
-
+    
     const generateTickets = async (paymentMethod) => {
+        console.log(tripInfo);
         try {
             const ticketsPromises = seatsHold.map(async (seatHold) => {
                 const ticketRequest = {
                     tripId: tripInfo.tripId,
                     seatHoldId: seatHold.id,
-                    userId: 4, // Hardcoded por ahora
+                    userId: us.id,
                     originId: tripInfo.originId,
                     destinationId: tripInfo.destinationId,
                     price: tripInfo.price,
@@ -91,6 +95,7 @@ function PaymentMethod({ isOpen, onClose, dataToSendForTickets, selectedSeats })
             setShowPaymentGateway(true);
         } else {
             // Para efectivo y transferencia, generar tickets inmediatamente
+            console.log("aaaaaaaaaa", tripInfo.us);
             console.log('Método de pago seleccionado:', selectedMethod);
             const success = await generateTickets(selectedMethod);
             

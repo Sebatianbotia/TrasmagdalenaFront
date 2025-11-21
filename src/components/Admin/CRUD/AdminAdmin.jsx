@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import '../../../styles/Admin/CRUD/genericStylesCrud.css';
 
-export default function AdminUsers() {
-    const [users, setUsers] = useState([]);
+export default function AdminAdmin() {
+    const [admins, setAdmins] = useState([]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     const [view, setView] = useState('list');
-    const [selectedUser, setSelectedUser] = useState(null);
+    const [selectedAdmin, setSelectedAdmin] = useState(null);
 
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
@@ -18,19 +18,19 @@ export default function AdminUsers() {
         email: '',
         phone: '',
         bornDate: '',
-        rol: 'PASSENGER'
+        rol: 'ADMIN'
     });
 
     useEffect(() => {
-        fetchUsers();
+        fetchAdmins();
     }, [currentPage]);
 
-    const fetchUsers = async () => {
+    const fetchAdmins = async () => {
         setLoading(true);
         setError(null);
 
         try {
-            const response = await fetch(`http://localhost:8080/api/v1/user/find/type?rol=PASSENGER&page=${currentPage}&size=${pageSize}`, {
+            const response = await fetch(`http://localhost:8080/api/v1/user/find/type?rol=ADMIN&page=${currentPage}&size=${pageSize}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -38,11 +38,11 @@ export default function AdminUsers() {
             });
 
             if (!response.ok) {
-                throw new Error('Error al cargar los usuarios');
+                throw new Error('Error al cargar los administradores');
             }
 
             const data = await response.json();
-            setUsers(data.content);
+            setAdmins(data.content);
             setTotalPages(data.totalPages);
         } catch (error) {
             setError(error.message);
@@ -61,7 +61,7 @@ export default function AdminUsers() {
 
     const handleAdd = async () => {
         try {
-            const userData = {
+            const adminData = {
                 name: formData.name,
                 email: formData.email,
                 phone: formData.phone,
@@ -74,7 +74,7 @@ export default function AdminUsers() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(userData)
+                body: JSON.stringify(adminData)
             });
 
             if (!response.ok) {
@@ -83,39 +83,39 @@ export default function AdminUsers() {
             }
 
             const data = await response.json();
-            setUsers([...users, data]);
+            setAdmins([...admins, data]);
             
             setFormData({
                 name: '',
                 email: '',
                 phone: '',
                 bornDate: '',
-                rol: 'PASSENGER'
+                rol: 'ADMIN'
             });
             setView('list');
-            fetchUsers();
+            fetchAdmins();
 
         } catch (error) {
-            console.error('Error al crear el usuario:', error);
+            console.error('Error al crear el administrador:', error);
             alert('Error: ' + error.message);
         }
     };
 
-    const handleEdit = (user) => {
-        setSelectedUser(user);
+    const handleEdit = (admin) => {
+        setSelectedAdmin(admin);
         setFormData({
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-            bornDate: user.bornDate,
-            rol: user.rol
+            name: admin.name,
+            email: admin.email,
+            phone: admin.phone,
+            bornDate: admin.bornDate,
+            rol: admin.rol
         });
         setView('edit');
     };
 
     const handleUpdate = async () => {
         try {
-            const userData = {
+            const adminData = {
                 name: formData.name,
                 email: formData.email,
                 phone: formData.phone,
@@ -123,12 +123,12 @@ export default function AdminUsers() {
                 rol: formData.rol
             };
 
-            const response = await fetch(`http://localhost:8080/api/v1/user/update/${selectedUser.id}`, {
+            const response = await fetch(`http://localhost:8080/api/v1/user/update/${selectedAdmin.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(userData)
+                body: JSON.stringify(adminData)
             });
 
             if (!response.ok) {
@@ -141,9 +141,9 @@ export default function AdminUsers() {
                 email: '',
                 phone: '',
                 bornDate: '',
-                rol: 'PASSENGER'
+                rol: 'ADMIN'
             });
-            fetchUsers();
+            fetchAdmins();
             setView('list');
         } catch (error) {
             console.error('Error:', error.message);
@@ -152,7 +152,7 @@ export default function AdminUsers() {
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm('¿Está seguro de eliminar este usuario?')) {
+        if (window.confirm('¿Está seguro de eliminar este administrador?')) {
             try {
                 const response = await fetch(`http://localhost:8080/api/v1/user/delete/${id}`, {
                     method: 'DELETE',
@@ -162,10 +162,10 @@ export default function AdminUsers() {
                 });
 
                 if (!response.ok) {
-                    throw new Error("No se pudo eliminar el usuario");
+                    throw new Error("No se pudo eliminar el administrador");
                 }
 
-                fetchUsers();
+                fetchAdmins();
             } catch (error) {
                 console.error('Error: ' + error.message);
                 alert('Error: ' + error.message);
@@ -173,8 +173,8 @@ export default function AdminUsers() {
         }
     };
 
-    const handleDetail = (user) => {
-        setSelectedUser(user);
+    const handleDetail = (admin) => {
+        setSelectedAdmin(admin);
         setView('detail');
     };
 
@@ -199,10 +199,10 @@ export default function AdminUsers() {
     return (
         <div className="admin-buses">
             <div className="admin-buses__header">
-                <h2 className="admin-buses__title">Administrar Usuarios (Pasajeros)</h2>
+                <h2 className="admin-buses__title">Administrar Administradores</h2>
                 {view === 'list' && (
                     <button className="btn btn--primary" onClick={() => setView('add')}>
-                        + Agregar Usuario
+                        + Agregar Administrador
                     </button>
                 )}
                 {view !== 'list' && (
@@ -226,30 +226,30 @@ export default function AdminUsers() {
                             </tr>
                         </thead>
                         <tbody>
-                            {users.map(user => (
-                                <tr key={user.id}>
-                                    <td>{user.name}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.phone}</td>
-                                    <td>{formatDate(user.bornDate)}</td>
-                                    <td>{getRolText(user.rol)}</td>
+                            {admins.map(admin => (
+                                <tr key={admin.id}>
+                                    <td>{admin.name}</td>
+                                    <td>{admin.email}</td>
+                                    <td>{admin.phone}</td>
+                                    <td>{formatDate(admin.bornDate)}</td>
+                                    <td>{getRolText(admin.rol)}</td>
                                     <td>
                                         <div className="action-buttons">
                                             <button
                                                 className="btn btn--view"
-                                                onClick={() => handleDetail(user)}
+                                                onClick={() => handleDetail(admin)}
                                             >
                                                 Ver
                                             </button>
                                             <button
                                                 className="btn btn--edit"
-                                                onClick={() => handleEdit(user)}
+                                                onClick={() => handleEdit(admin)}
                                             >
                                                 Editar
                                             </button>
                                             <button
                                                 className="btn btn--delete"
-                                                onClick={() => handleDelete(user.id)}
+                                                onClick={() => handleDelete(admin.id)}
                                             >
                                                 Eliminar
                                             </button>
@@ -265,7 +265,7 @@ export default function AdminUsers() {
             {(view === 'add' || view === 'edit') && (
                 <div className="form-container">
                     <h3 className="form-title">
-                        {view === 'add' ? 'Agregar Nuevo Usuario' : 'Editar Usuario'}
+                        {view === 'add' ? 'Agregar Nuevo Administrador' : 'Editar Administrador'}
                     </h3>
                     <div className="form">
                         <div className="form-group">
@@ -314,9 +314,9 @@ export default function AdminUsers() {
                                 value={formData.rol}
                                 onChange={handleInputChange}
                             >
-                                <option value="PASSENGER">Pasajero</option>
-                                <option value="STUDENT">Estudiante</option>
-                                <option value="OLD_MAN">Adulto Mayor</option>
+                                <option value="ADMIN">Administrador</option>
+                                <option value="DISPATCHER">Despachador</option>
+                                <option value="CLERK">Empleado</option>
                             </select>
                         </div>
 
@@ -338,33 +338,33 @@ export default function AdminUsers() {
                 </div>
             )}
 
-            {view === 'detail' && selectedUser && (
+            {view === 'detail' && selectedAdmin && (
                 <div className="detail-container">
-                    <h3 className="form-title">Detalle del Usuario</h3>
+                    <h3 className="form-title">Detalle del Administrador</h3>
                     <div className="detail-card">
                         <div className="detail-item">
                             <span className="detail-label">ID:</span>
-                            <span className="detail-value">{selectedUser.id}</span>
+                            <span className="detail-value">{selectedAdmin.id}</span>
                         </div>
                         <div className="detail-item">
                             <span className="detail-label">Nombre:</span>
-                            <span className="detail-value">{selectedUser.name}</span>
+                            <span className="detail-value">{selectedAdmin.name}</span>
                         </div>
                         <div className="detail-item">
                             <span className="detail-label">Email:</span>
-                            <span className="detail-value">{selectedUser.email}</span>
+                            <span className="detail-value">{selectedAdmin.email}</span>
                         </div>
                         <div className="detail-item">
                             <span className="detail-label">Teléfono:</span>
-                            <span className="detail-value">{selectedUser.phone}</span>
+                            <span className="detail-value">{selectedAdmin.phone}</span>
                         </div>
                         <div className="detail-item">
                             <span className="detail-label">Fecha Nacimiento:</span>
-                            <span className="detail-value">{formatDate(selectedUser.bornDate)}</span>
+                            <span className="detail-value">{formatDate(selectedAdmin.bornDate)}</span>
                         </div>
                         <div className="detail-item">
                             <span className="detail-label">Rol:</span>
-                            <span className="detail-value">{getRolText(selectedUser.rol)}</span>
+                            <span className="detail-value">{getRolText(selectedAdmin.rol)}</span>
                         </div>
                     </div>
                     <button className="btn btn--primary" onClick={() => setView('list')}>

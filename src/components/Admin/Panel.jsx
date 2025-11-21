@@ -12,6 +12,8 @@ import AdminTickets from "./CRUD/AdminTickets"
 import AdminTrips from "./CRUD/AdminTrips"
 import AdminUsers from "./CRUD/AdminUsers"
 import AdminParcels from "./CRUD/AdminParcels"
+import AdminAdmin from "./CRUD/AdminAdmin"
+import AdminDispatcher from "./CRUD/AdminDispatcher"
 
 export default function Panel({onClose}) {
     const [activeSection, setActiveSection] = useState('dashboard');
@@ -30,6 +32,8 @@ export default function Panel({onClose}) {
             case 'tiquetes': return <AdminTickets />;
             case 'viajes': return <AdminTrips />;
             case 'parcels': return <AdminParcels />;
+            case 'admin': return <AdminAdmin />;
+            case 'dispatcher': return <AdminDispatcher/>;
             default: return <Dashboard />;
         }
     };
@@ -50,6 +54,12 @@ export default function Panel({onClose}) {
                             Dashboard
                         </li>
                         <li 
+                            className={`action__item ${activeSection === 'admin' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('admin')}
+                        >
+                            Administradores
+                        </li>
+                        <li 
                             className={`action__item ${activeSection === 'buses' ? 'active' : ''}`}
                             onClick={() => setActiveSection('buses')}
                         >
@@ -66,6 +76,12 @@ export default function Panel({onClose}) {
                             onClick={() => setActiveSection('conductores')}
                         >
                             Administrar conductores
+                        </li>
+                        <li 
+                            className={`action__item ${activeSection === 'distparcher' ? 'active' : ''}`}
+                            onClick={() => setActiveSection('dispatcher')}
+                        >
+                            Administrar Despachadores
                         </li>
                         <li 
                             className={`action__item ${activeSection === 'usuarios' ? 'active' : ''}`}

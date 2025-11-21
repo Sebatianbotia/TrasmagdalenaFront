@@ -143,7 +143,7 @@ export default function AdminCities() {
                 if(!response.ok){
                     throw new Error("No se pudo eliminar hp")
                 }
-                fetchAssignments();
+                fetchCities();
             }
             catch(error){
                 console.error('Error: '+ error.message);

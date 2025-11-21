@@ -3,135 +3,185 @@ import '../../../styles/Admin/CRUD/genericStylesCrud.css';
 
 export default function AdminRutas() {
     const [routes, setRoutes] = useState([]);
-        const [error, setError] = useState('');
+    const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     const [view, setView] = useState('list');
     const [selectedRoute, setSelectedRoute] = useState(null);
 
-     const[currentPage, setCurrentPage] = useState(0);
-    const[totalPages, setTotalpages] = useState(0)
-    const[pageSize] = useState(10);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [pageSize] = useState(10);
 
     const [formData, setFormData] = useState({
         code: '',
         originId: '',
-        destinationId: ''
+        destinationId: '',
+        distanceKm: '',
+        durationTime: ''
     });
 
-        useEffect(()=>{
+    useEffect(() => {
         fetchRoutes();
-    }, [currentPage]);// se va a ejecutar cuando cambie la pagina
+    }, [currentPage]);
 
     const fetchRoutes = async () => {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`http://localhost:8080/api/v1/route/all?page=${currentPage}&size=${pageSize}`,
-            {
+        try {
+            const response = await fetch(`http://localhost:8080/api/v1/route/all?page=${currentPage}&size=${pageSize}`, {
                 method: 'GET',
                 headers: {
-                    'Content-type':'application/json'
-                    //Cuando implementemos el JWT (API:JS)
-                    // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Content-Type': 'application/json'
                 }
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al cargar las rutas');
             }
-        );
-        if(!response.ok){
-            throw new Error('Error al cargar las asignaciones');
+
+            const data = await response.json();
+            setRoutes(data.content);
+            setTotalPages(data.totalPages);
+        } catch (error) {
+            setError(error.message);
+            console.error('Error:', error);
+        } finally {
+            setLoading(false);
         }
-
-        const data = await response.json(); //convertimos el response a json
-
-        setRoutes(data.content); 
-        setTotalpages(data.totalPages);
-    }
+    };
 
     const handleInputChange = (e) => {
+        const { name, value } = e.target;
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value
+            [name]: value
         });
     };
 
-// const handleAdd = async () => {
-//         try{
-//                     // Convertir datetime-local a OffsetDateTime con zona horaria
-//         const response = await fetch('http://localhost:8080/api/v1/route/create', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify(formData) // JSON.stringify(formData)
-//         });
+    const handleAdd = async () => {
+        try {
+            // Validar campos obligatorios
+            if (!formData.code || !formData.originId || !formData.destinationId || 
+                !formData.distanceKm || !formData.durationTime) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
 
-//         if (!response.ok) {
-//             const errorData = await response.json();
-//             throw new Error(errorData.message || "Datos no válidos");
-//         }
+            const routeData = {
+                code: formData.code,
+                originId: parseInt(formData.originId),
+                destinationId: parseInt(formData.destinationId),
+                distanceKm: parseFloat(formData.distanceKm),
+                durationTime: parseFloat(formData.durationTime)
+            };
 
-//         const data = await response.json();
-//         setRoutes([...routes, data]);
+            const response = await fetch('http://localhost:8080/api/v1/route/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(routeData)
+            });
 
-//         setFormData({
-//             code: '',
-//             originId: '',
-//             destinationId: ''
-//         });
-        
-//         setView('list');
-        
-//     } catch (error) {
-//         console.error('Error al crear la ruta:', error);
-//         alert('Error: ' + error.message);
-//     }
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Datos no válidos");
+            }
 
-//     };
+            const data = await response.json();
+            
+            setFormData({
+                code: '',
+                originId: '',
+                destinationId: '',
+                distanceKm: '',
+                durationTime: ''
+            });
+            
+            setView('list');
+            fetchRoutes();
+
+        } catch (error) {
+            console.error('Error al crear la ruta:', error);
+            alert('Error: ' + error.message);
+        }
+    };
 
     const handleEdit = (route) => {
         setSelectedRoute(route);
         setFormData({
             code: route.code || '',
             originId: route.originId ?? '',
-            destinationId: route.destinationId ?? ''
+            destinationId: route.destinationId ?? '',
+            distanceKm: route.distanceKm ?? '',
+            durationTime: route.durationTime ?? ''
         });
         setView('edit');
     };
 
+    const handleUpdate = async () => {
+        try {
+            const routeData = {
+                code: formData.code || undefined,
+                originId: formData.originId ? parseInt(formData.originId) : undefined,
+                destinationId: formData.destinationId ? parseInt(formData.destinationId) : undefined,
+                distanceKm: formData.distanceKm ? parseFloat(formData.distanceKm) : undefined,
+                durationTime: formData.durationTime ? parseFloat(formData.durationTime) : undefined
+            };
 
-    // const handleUpdate = async () => {
-    //     try{
-    //         const response = await fetch(`http://localhost:8080/api/v1/route/update/${selectedRoute.id}`,
-    //             {
-    //                 method:'PATCH',
-    //                 headers:{
-    //                     'Content-Type': 'application/json'
-    //                 },
-    //                 body:JSON.stringify(formData)
-    //             }
-    //         )
-    //         if(!response.ok){
-    //             const errorData = await response.json
-    //             throw new Error(errorData.message || "Error al actualizar")
-    //         }
-    
-    //         setFormData({
-    //              code: '',
-    //             originId: '',
-    //             destinationId: ''
-    //         });
-    //         fetchRoutes();
-    //         setView('list');
-    //     }
-    //     catch(error){
-    //         console.error('Error:',error.message);
-    //         alert("Error: " + error.message)
-    //     }
-    // };
+            Object.keys(routeData).forEach(key => 
+                routeData[key] === undefined && delete routeData[key]
+            );
 
-    const handleDelete = (id) => {
+            const response = await fetch(`http://localhost:8080/api/v1/route/update/${selectedRoute.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(routeData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Error al actualizar");
+            }
+
+            setFormData({
+                code: '',
+                originId: '',
+                destinationId: '',
+                distanceKm: '',
+                durationTime: ''
+            });
+            fetchRoutes();
+            setView('list');
+        } catch (error) {
+            console.error('Error:', error.message);
+            alert("Error: " + error.message);
+        }
+    };
+
+    const handleDelete = async (id) => {
         if (window.confirm('¿Está seguro de eliminar esta ruta?')) {
-            setRoutes(routes.filter(r => r.id !== id));
+            try {
+                const response = await fetch(`http://localhost:8080/api/v1/route/delete/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error("No se pudo eliminar la ruta");
+                }
+
+                fetchRoutes();
+            } catch (error) {
+                console.error('Error:', error.message);
+                alert('Error: ' + error.message);
+            }
         }
     };
 
@@ -156,6 +206,9 @@ export default function AdminRutas() {
                 )}
             </div>
 
+            {loading && <p>Cargando...</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+
             {view === 'list' && (
                 <div className="table-container">
                     <table className="data-table">
@@ -165,7 +218,7 @@ export default function AdminRutas() {
                                 <th>Origen</th>
                                 <th>Destino</th>
                                 <th>Distancia (km)</th>
-                                <th>Duración</th>
+                                <th>Duración (hrs)</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -203,6 +256,25 @@ export default function AdminRutas() {
                             ))}
                         </tbody>
                     </table>
+
+                    {/* Paginación */}
+                    <div className="pagination">
+                        <button 
+                            onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+                            disabled={currentPage === 0}
+                            className="btn btn--secondary"
+                        >
+                            Anterior
+                        </button>
+                        <span>Página {currentPage + 1} de {totalPages}</span>
+                        <button 
+                            onClick={() => setCurrentPage(prev => Math.min(totalPages - 1, prev + 1))}
+                            disabled={currentPage >= totalPages - 1}
+                            className="btn btn--secondary"
+                        >
+                            Siguiente
+                        </button>
+                    </div>
                 </div>
             )}
 
@@ -213,30 +285,60 @@ export default function AdminRutas() {
                     </h3>
                     <div className="form">
                         <div className="form-group">
-                            <label>Código</label>
+                            <label>Código *</label>
                             <input
                                 type="text"
                                 name="code"
                                 value={formData.code}
                                 onChange={handleInputChange}
+                                placeholder="Ej: RUT-001"
+                                required
                             />
                         </div>
                         <div className="form-group">
-                            <label>ID Origen (originId)</label>
+                            <label>ID Origen *</label>
                             <input
                                 type="number"
                                 name="originId"
                                 value={formData.originId}
                                 onChange={handleInputChange}
+                                placeholder="Ej: 1"
+                                required
                             />
                         </div>
                         <div className="form-group">
-                            <label>ID Destino (destinationId)</label>
+                            <label>ID Destino *</label>
                             <input
                                 type="number"
                                 name="destinationId"
                                 value={formData.destinationId}
                                 onChange={handleInputChange}
+                                placeholder="Ej: 2"
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Distancia (km) *</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                name="distanceKm"
+                                value={formData.distanceKm}
+                                onChange={handleInputChange}
+                                placeholder="Ej: 150.5"
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Duración (horas) *</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                name="durationTime"
+                                value={formData.durationTime}
+                                onChange={handleInputChange}
+                                placeholder="Ej: 2.5"
+                                required
                             />
                         </div>
                         <div className="form-buttons">
@@ -282,25 +384,27 @@ export default function AdminRutas() {
                             <span className="detail-value">{selectedRoute.distanceKm}</span>
                         </div>
                         <div className="detail-item">
-                            <span className="detail-label">Duración:</span>
+                            <span className="detail-label">Duración (horas):</span>
                             <span className="detail-value">{selectedRoute.durationTime}</span>
                         </div>
 
-                        <div className="detail-item">
-                            <span className="detail-label">Paradas (routeStops):</span>
-                            <span className="detail-value">
-                                {selectedRoute.routeStops && selectedRoute.routeStops.length > 0
-                                    ? selectedRoute.routeStops
-                                          .map(
-                                              stop =>
-                                                  `#${stop.stopOrder} ${stop.origin} → ${stop.destination} (${
-                                                      stop.price
-                                                  }${stop.isDinamycPricing ? ', dinámico' : ''})`
-                                          )
-                                          .join(' | ')
-                                    : 'Sin paradas asociadas'}
-                            </span>
-                        </div>
+                        {selectedRoute.routeStops && selectedRoute.routeStops.length > 0 && (
+                            <div className="detail-item">
+                                <span className="detail-label">Paradas:</span>
+                                <div className="detail-value">
+                                    {selectedRoute.routeStops.map((stop, index) => (
+                                        <div key={stop.id} style={{ marginBottom: '8px' }}>
+                                            <strong>#{stop.stopOrder}</strong> {stop.origin} → {stop.destination}
+                                            <br />
+                                            <small>
+                                                Precio: ${stop.price}
+                                                {stop.isDinamycPricing && ' (Precio dinámico)'}
+                                            </small>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                     <button className="btn btn--primary" onClick={() => setView('list')}>
                         Volver a la lista

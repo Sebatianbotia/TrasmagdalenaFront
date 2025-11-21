@@ -10,6 +10,8 @@ function PaymentGateway({ isOpen, onClose, dataToSendForTickets, selectedSeats }
         cvv: ''
     });
 
+    const us = JSON.parse(localStorage.getItem('user'));
+
     const [isProcessing, setIsProcessing] = useState(false);
     const [generatedTickets, setGeneratedTickets] = useState([]);
     const [showTickets, setShowTickets] = useState(false);
@@ -25,7 +27,7 @@ function PaymentGateway({ isOpen, onClose, dataToSendForTickets, selectedSeats }
                 const ticketRequest = {
                     tripId: tripInfo.tripId,
                     seatHoldId: seatHold.id,
-                    userId: 4, // Hardcoded por ahora
+                    userId: us.id,
                     originId: tripInfo.originId,
                     destinationId: tripInfo.destinationId,
                     price: tripInfo.price,
@@ -81,19 +83,15 @@ function PaymentGateway({ isOpen, onClose, dataToSendForTickets, selectedSeats }
         setIsProcessing(true);
 
         try {
-            // Aquí irá tu lógica de procesamiento de pago
             console.log('Procesando pago con tarjeta:', cardData);
             console.log('Data para tickets:', dataToSendForTickets);
             
-            // Simular llamada a API de pago
             await new Promise(resolve => setTimeout(resolve, 2000));
             
-            // Después del pago exitoso, generar los tickets
             const success = await generateTickets('CARD');
             
             if (success) {
                 console.log('Tickets generados exitosamente:', generatedTickets);
-                // No cerramos el modal aquí, mostramos los tickets
             }
             
         } catch (error) {
@@ -110,7 +108,6 @@ function PaymentGateway({ isOpen, onClose, dataToSendForTickets, selectedSeats }
         onClose();
     };
 
-    // Si estamos mostrando tickets, mostramos el componente de tickets
     if (showTickets) {
         return (
             <div className="modal-overlay" onClick={handleCloseTickets}>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../styles/Login.css';
 import { authService } from '../services/authServices';
 
-const Login = ({ onClose, onLoginSuccess }) => {
+const Login = ({ onClose, onLoginSuccess, onOpenRegister }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,6 +13,7 @@ const Login = ({ onClose, onLoginSuccess }) => {
     setShowPassword(!showPassword);
   };
 
+  
   const ValidateUser = async (e) => { 
     e.preventDefault();
     
@@ -33,7 +34,6 @@ const Login = ({ onClose, onLoginSuccess }) => {
       console.log("Login exitoso", data.user);
       console.log("Rol del usuario:", data.user.rol);
       
-      // Llamar al callback con el rol del usuario
       onLoginSuccess(data.user.rol, data.user);
       
     } catch (err) {
@@ -132,7 +132,14 @@ const Login = ({ onClose, onLoginSuccess }) => {
               </button>
               <p className="register-text">
                 ¿No tiene cuenta?{' '}
-                <a href="#" className="register-link">
+                <a 
+                  href="#" 
+                  className="register-link"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onOpenRegister();
+                  }}
+                >
                   Registrarme
                 </a>
               </p>

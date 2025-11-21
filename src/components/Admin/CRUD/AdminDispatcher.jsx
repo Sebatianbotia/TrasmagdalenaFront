@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import '../../../styles/Admin/CRUD/genericStylesCrud.css';
 
-export default function AdminUsers() {
-    const [users, setUsers] = useState([]);
+export default function AdminDispatcher() {
+    const [dispatchers, setDispatchers] = useState([]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     const [view, setView] = useState('list');
-    const [selectedUser, setSelectedUser] = useState(null);
+    const [selectedDispatcher, setSelectedDispatcher] = useState(null);
 
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
@@ -18,19 +18,19 @@ export default function AdminUsers() {
         email: '',
         phone: '',
         bornDate: '',
-        rol: 'PASSENGER'
+        rol: 'DISPATCHER'
     });
 
     useEffect(() => {
-        fetchUsers();
+        fetchDispatchers();
     }, [currentPage]);
 
-    const fetchUsers = async () => {
+    const fetchDispatchers = async () => {
         setLoading(true);
         setError(null);
 
         try {
-            const response = await fetch(`http://localhost:8080/api/v1/user/find/type?rol=PASSENGER&page=${currentPage}&size=${pageSize}`, {
+            const response = await fetch(`http://localhost:8080/api/v1/user/find/type?rol=DISPATCHER&page=${currentPage}&size=${pageSize}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -38,11 +38,11 @@ export default function AdminUsers() {
             });
 
             if (!response.ok) {
-                throw new Error('Error al cargar los usuarios');
+                throw new Error('Error al cargar los despachadores');
             }
 
             const data = await response.json();
-            setUsers(data.content);
+            setDispatchers(data.content);
             setTotalPages(data.totalPages);
         } catch (error) {
             setError(error.message);
@@ -61,7 +61,7 @@ export default function AdminUsers() {
 
     const handleAdd = async () => {
         try {
-            const userData = {
+            const dispatcherData = {
                 name: formData.name,
                 email: formData.email,
                 phone: formData.phone,
@@ -74,7 +74,7 @@ export default function AdminUsers() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(userData)
+                body: JSON.stringify(dispatcherData)
             });
 
             if (!response.ok) {
@@ -83,39 +83,39 @@ export default function AdminUsers() {
             }
 
             const data = await response.json();
-            setUsers([...users, data]);
+            setDispatchers([...dispatchers, data]);
             
             setFormData({
                 name: '',
                 email: '',
                 phone: '',
                 bornDate: '',
-                rol: 'PASSENGER'
+                rol: 'DISPATCHER'
             });
             setView('list');
-            fetchUsers();
+            fetchDispatchers();
 
         } catch (error) {
-            console.error('Error al crear el usuario:', error);
+            console.error('Error al crear el despachador:', error);
             alert('Error: ' + error.message);
         }
     };
 
-    const handleEdit = (user) => {
-        setSelectedUser(user);
+    const handleEdit = (dispatcher) => {
+        setSelectedDispatcher(dispatcher);
         setFormData({
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-            bornDate: user.bornDate,
-            rol: user.rol
+            name: dispatcher.name,
+            email: dispatcher.email,
+            phone: dispatcher.phone,
+            bornDate: dispatcher.bornDate,
+            rol: dispatcher.rol
         });
         setView('edit');
     };
 
     const handleUpdate = async () => {
         try {
-            const userData = {
+            const dispatcherData = {
                 name: formData.name,
                 email: formData.email,
                 phone: formData.phone,
@@ -123,12 +123,12 @@ export default function AdminUsers() {
                 rol: formData.rol
             };
 
-            const response = await fetch(`http://localhost:8080/api/v1/user/update/${selectedUser.id}`, {
+            const response = await fetch(`http://localhost:8080/api/v1/user/update/${selectedDispatcher.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(userData)
+                body: JSON.stringify(dispatcherData)
             });
 
             if (!response.ok) {
@@ -141,9 +141,9 @@ export default function AdminUsers() {
                 email: '',
                 phone: '',
                 bornDate: '',
-                rol: 'PASSENGER'
+                rol: 'DISPATCHER'
             });
-            fetchUsers();
+            fetchDispatchers();
             setView('list');
         } catch (error) {
             console.error('Error:', error.message);
@@ -152,7 +152,7 @@ export default function AdminUsers() {
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm('¿Está seguro de eliminar este usuario?')) {
+        if (window.confirm('¿Está seguro de eliminar este despachador?')) {
             try {
                 const response = await fetch(`http://localhost:8080/api/v1/user/delete/${id}`, {
                     method: 'DELETE',
@@ -162,10 +162,10 @@ export default function AdminUsers() {
                 });
 
                 if (!response.ok) {
-                    throw new Error("No se pudo eliminar el usuario");
+                    throw new Error("No se pudo eliminar el despachador");
                 }
 
-                fetchUsers();
+                fetchDispatchers();
             } catch (error) {
                 console.error('Error: ' + error.message);
                 alert('Error: ' + error.message);
@@ -173,8 +173,8 @@ export default function AdminUsers() {
         }
     };
 
-    const handleDetail = (user) => {
-        setSelectedUser(user);
+    const handleDetail = (dispatcher) => {
+        setSelectedDispatcher(dispatcher);
         setView('detail');
     };
 
@@ -199,10 +199,10 @@ export default function AdminUsers() {
     return (
         <div className="admin-buses">
             <div className="admin-buses__header">
-                <h2 className="admin-buses__title">Administrar Usuarios (Pasajeros)</h2>
+                <h2 className="admin-buses__title">Administrar Despachadores</h2>
                 {view === 'list' && (
                     <button className="btn btn--primary" onClick={() => setView('add')}>
-                        + Agregar Usuario
+                        + Agregar Despachador
                     </button>
                 )}
                 {view !== 'list' && (
@@ -226,30 +226,30 @@ export default function AdminUsers() {
                             </tr>
                         </thead>
                         <tbody>
-                            {users.map(user => (
-                                <tr key={user.id}>
-                                    <td>{user.name}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.phone}</td>
-                                    <td>{formatDate(user.bornDate)}</td>
-                                    <td>{getRolText(user.rol)}</td>
+                            {dispatchers.map(dispatcher => (
+                                <tr key={dispatcher.id}>
+                                    <td>{dispatcher.name}</td>
+                                    <td>{dispatcher.email}</td>
+                                    <td>{dispatcher.phone}</td>
+                                    <td>{formatDate(dispatcher.bornDate)}</td>
+                                    <td>{getRolText(dispatcher.rol)}</td>
                                     <td>
                                         <div className="action-buttons">
                                             <button
                                                 className="btn btn--view"
-                                                onClick={() => handleDetail(user)}
+                                                onClick={() => handleDetail(dispatcher)}
                                             >
                                                 Ver
                                             </button>
                                             <button
                                                 className="btn btn--edit"
-                                                onClick={() => handleEdit(user)}
+                                                onClick={() => handleEdit(dispatcher)}
                                             >
                                                 Editar
                                             </button>
                                             <button
                                                 className="btn btn--delete"
-                                                onClick={() => handleDelete(user.id)}
+                                                onClick={() => handleDelete(dispatcher.id)}
                                             >
                                                 Eliminar
                                             </button>
@@ -265,7 +265,7 @@ export default function AdminUsers() {
             {(view === 'add' || view === 'edit') && (
                 <div className="form-container">
                     <h3 className="form-title">
-                        {view === 'add' ? 'Agregar Nuevo Usuario' : 'Editar Usuario'}
+                        {view === 'add' ? 'Agregar Nuevo Despachador' : 'Editar Despachador'}
                     </h3>
                     <div className="form">
                         <div className="form-group">
@@ -314,9 +314,9 @@ export default function AdminUsers() {
                                 value={formData.rol}
                                 onChange={handleInputChange}
                             >
-                                <option value="PASSENGER">Pasajero</option>
-                                <option value="STUDENT">Estudiante</option>
-                                <option value="OLD_MAN">Adulto Mayor</option>
+                                <option value="DISPATCHER">Despachador</option>
+                                <option value="ADMIN">Administrador</option>
+                                <option value="CLERK">Empleado</option>
                             </select>
                         </div>
 
@@ -338,33 +338,33 @@ export default function AdminUsers() {
                 </div>
             )}
 
-            {view === 'detail' && selectedUser && (
+            {view === 'detail' && selectedDispatcher && (
                 <div className="detail-container">
-                    <h3 className="form-title">Detalle del Usuario</h3>
+                    <h3 className="form-title">Detalle del Despachador</h3>
                     <div className="detail-card">
                         <div className="detail-item">
                             <span className="detail-label">ID:</span>
-                            <span className="detail-value">{selectedUser.id}</span>
+                            <span className="detail-value">{selectedDispatcher.id}</span>
                         </div>
                         <div className="detail-item">
                             <span className="detail-label">Nombre:</span>
-                            <span className="detail-value">{selectedUser.name}</span>
+                            <span className="detail-value">{selectedDispatcher.name}</span>
                         </div>
                         <div className="detail-item">
                             <span className="detail-label">Email:</span>
-                            <span className="detail-value">{selectedUser.email}</span>
+                            <span className="detail-value">{selectedDispatcher.email}</span>
                         </div>
                         <div className="detail-item">
                             <span className="detail-label">Teléfono:</span>
-                            <span className="detail-value">{selectedUser.phone}</span>
+                            <span className="detail-value">{selectedDispatcher.phone}</span>
                         </div>
                         <div className="detail-item">
                             <span className="detail-label">Fecha Nacimiento:</span>
-                            <span className="detail-value">{formatDate(selectedUser.bornDate)}</span>
+                            <span className="detail-value">{formatDate(selectedDispatcher.bornDate)}</span>
                         </div>
                         <div className="detail-item">
                             <span className="detail-label">Rol:</span>
-                            <span className="detail-value">{getRolText(selectedUser.rol)}</span>
+                            <span className="detail-value">{getRolText(selectedDispatcher.rol)}</span>
                         </div>
                     </div>
                     <button className="btn btn--primary" onClick={() => setView('list')}>

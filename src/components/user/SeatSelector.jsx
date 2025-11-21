@@ -9,6 +9,10 @@ function SeatSelector({ isOpen, onClose, tripInfo, seats }) {
     const [seatsHold, setSeatsHold] = useState([]);
     const [dataForTickets, setDataForTk]= useState({});
 
+    const usStr = localStorage.getItem('user');
+    const us = JSON.parse(usStr)
+    console.log("user", us);
+
     if (!isOpen) return null;
 
     const rows = Math.ceil(seats.length / 4);
@@ -21,10 +25,12 @@ function SeatSelector({ isOpen, onClose, tripInfo, seats }) {
     const makeSeatHold = async (seatId) => {
         try {
             const seatHoldData = {
-                userId: 4,
+                userId: us.id,
                 tripId: tripInfo.tripId,
                 seatId: seatId
             };
+
+            console.log(seatHoldData);
 
             const response = await fetch(`http://localhost:8080/api/v1/seatHold/create`, {
                 method: 'POST',
@@ -51,7 +57,7 @@ function SeatSelector({ isOpen, onClose, tripInfo, seats }) {
 
         } catch (error) {
             console.error("Error de red:", error);
-            alert('Error de conexión. Por favor verifica tu conexión a internet.');
+            alert('Inicie sesion para poder comprar.');
             return false;
         }
     };
@@ -85,8 +91,7 @@ function SeatSelector({ isOpen, onClose, tripInfo, seats }) {
         const dataToSendForTickets = {
             tripInfo,
             seatsHold,
-            totalPrice
-            //userId,
+            totalPrice,
         };
 
         setDataForTk(dataToSendForTickets);

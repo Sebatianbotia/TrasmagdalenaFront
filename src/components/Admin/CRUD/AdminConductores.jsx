@@ -1,70 +1,104 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../../../styles/Admin/CRUD/genericStylesCrud.css';
 
-export default function AdminConductores() {
-    const [drivers, setDrivers] = useState([
-        {
-            id: 1,
-            name: 'Juan Pérez',
-            email: 'juan.perez@example.com',
-            phone: '3001234567',
-            rol: 'DRIVER',
-            driverAssignments: [],
-            dispatcherAssignments: []
-        },
-        {
-            id: 2,
-            name: 'María Gómez',
-            email: 'maria.gomez@example.com',
-            phone: '3009876543',
-            rol: 'DRIVER',
-            driverAssignments: [],
-            dispatcherAssignments: []
-        }
-    ]);
+export default function AdminDrivers() {
+    const [drivers, setDrivers] = useState([]);
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const [view, setView] = useState('list');
-
     const [selectedDriver, setSelectedDriver] = useState(null);
+
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [pageSize] = useState(10);
 
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         phone: '',
-        passwordHash: '',
+        bornDate: '',
         rol: 'DRIVER'
     });
 
+    useEffect(() => {
+        fetchDrivers();
+    }, [currentPage]);
+
+    const fetchDrivers = async () => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/v1/user/find/type?rol=DRIVER&page=${currentPage}&size=${pageSize}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al cargar los conductores');
+            }
+
+            const data = await response.json();
+            setDrivers(data.content);
+            setTotalPages(data.totalPages);
+        } catch (error) {
+            setError(error.message);
+            console.error('Error:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
         setFormData({
             ...formData,
-            [name]: value
+            [e.target.name]: e.target.value
         });
     };
 
-    const handleAdd = () => {
-        setDrivers([
-            ...drivers,
-            {
-                id: drivers.length + 1,
+    const handleAdd = async () => {
+        try {
+            const driverData = {
                 name: formData.name,
                 email: formData.email,
                 phone: formData.phone,
-                passwordHash: formData.passwordHash,
-                rol: 'DRIVER',
-                driverAssignments: [],
-                dispatcherAssignments: []
+                bornDate: formData.bornDate,
+                rol: formData.rol
+            };
+
+            const response = await fetch('http://localhost:8080/api/v1/user/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(driverData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Datos no válidos");
             }
-        ]);
-        setFormData({
-            name: '',
-            email: '',
-            phone: '',
-            passwordHash: '',
-            rol: 'DRIVER'
-        });
-        setView('list');
+
+            const data = await response.json();
+            setDrivers([...drivers, data]);
+            
+            setFormData({
+                name: '',
+                email: '',
+                phone: '',
+                bornDate: '',
+                rol: 'DRIVER'
+            });
+            setView('list');
+            fetchDrivers();
+
+        } catch (error) {
+            console.error('Error al crear el conductor:', error);
+            alert('Error: ' + error.message);
+        }
     };
 
     const handleEdit = (driver) => {
@@ -73,49 +107,93 @@ export default function AdminConductores() {
             name: driver.name,
             email: driver.email,
             phone: driver.phone,
-            passwordHash: '', // opcional, según cómo manejes update de contraseña
+            bornDate: driver.bornDate,
             rol: driver.rol
         });
         setView('edit');
     };
 
-    const handleUpdate = () => {
-        setDrivers(
-            drivers.map(d =>
-                d.id === selectedDriver.id
-                    ? {
-                        ...selectedDriver,
-                        name: formData.name,
-                        email: formData.email,
-                        phone: formData.phone,
-                        rol: 'DRIVER',
-                        // si passwordHash está vacío no lo cambias; eso ya será lógica de backend
-                        ...(formData.passwordHash
-                            ? { passwordHash: formData.passwordHash }
-                            : {})
-                    }
-                    : d
-            )
-        );
-        setFormData({
-            name: '',
-            email: '',
-            phone: '',
-            passwordHash: '',
-            rol: 'DRIVER'
-        });
-        setView('list');
+    const handleUpdate = async () => {
+        try {
+            const driverData = {
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                bornDate: formData.bornDate,
+                rol: formData.rol
+            };
+
+            const response = await fetch(`http://localhost:8080/api/v1/user/update/${selectedDriver.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(driverData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Error al actualizar");
+            }
+
+            setFormData({
+                name: '',
+                email: '',
+                phone: '',
+                bornDate: '',
+                rol: 'DRIVER'
+            });
+            fetchDrivers();
+            setView('list');
+        } catch (error) {
+            console.error('Error:', error.message);
+            alert("Error: " + error.message);
+        }
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (window.confirm('¿Está seguro de eliminar este conductor?')) {
-            setDrivers(drivers.filter(d => d.id !== id));
+            try {
+                const response = await fetch(`http://localhost:8080/api/v1/user/delete/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error("No se pudo eliminar el conductor");
+                }
+
+                fetchDrivers();
+            } catch (error) {
+                console.error('Error: ' + error.message);
+                alert('Error: ' + error.message);
+            }
         }
     };
 
     const handleDetail = (driver) => {
         setSelectedDriver(driver);
         setView('detail');
+    };
+
+    const getRolText = (rol) => {
+        const rolMap = {
+            'PASSENGER': 'Pasajero',
+            'CLERK': 'Empleado',
+            'DRIVER': 'Conductor',
+            'DISPATCHER': 'Despachador',
+            'ADMIN': 'Administrador',
+            'STUDENT': 'Estudiante',
+            'OLD_MAN': 'Adulto Mayor'
+        };
+        return rolMap[rol] || rol;
+    };
+
+    const formatDate = (dateString) => {
+        if (!dateString) return 'No especificada';
+        return new Date(dateString).toLocaleDateString('es-CO');
     };
 
     return (
@@ -142,6 +220,7 @@ export default function AdminConductores() {
                                 <th>Nombre</th>
                                 <th>Email</th>
                                 <th>Teléfono</th>
+                                <th>Fecha Nacimiento</th>
                                 <th>Rol</th>
                                 <th>Acciones</th>
                             </tr>
@@ -152,7 +231,8 @@ export default function AdminConductores() {
                                     <td>{driver.name}</td>
                                     <td>{driver.email}</td>
                                     <td>{driver.phone}</td>
-                                    <td>{driver.rol}</td>
+                                    <td>{formatDate(driver.bornDate)}</td>
+                                    <td>{getRolText(driver.rol)}</td>
                                     <td>
                                         <div className="action-buttons">
                                             <button
@@ -195,6 +275,7 @@ export default function AdminConductores() {
                                 name="name"
                                 value={formData.name}
                                 onChange={handleInputChange}
+                                placeholder="Nombre completo"
                             />
                         </div>
                         <div className="form-group">
@@ -204,6 +285,7 @@ export default function AdminConductores() {
                                 name="email"
                                 value={formData.email}
                                 onChange={handleInputChange}
+                                placeholder="correo@ejemplo.com"
                             />
                         </div>
                         <div className="form-group">
@@ -213,26 +295,32 @@ export default function AdminConductores() {
                                 name="phone"
                                 value={formData.phone}
                                 onChange={handleInputChange}
+                                placeholder="3001234567"
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Fecha de Nacimiento</label>
+                            <input
+                                type="date"
+                                name="bornDate"
+                                value={formData.bornDate}
+                                onChange={handleInputChange}
                             />
                         </div>
                         <div className="form-group">
                             <label>Rol</label>
-                            <input
-                                type="text"
+                            <select
                                 name="rol"
                                 value={formData.rol}
-                                disabled
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Contraseña (passwordHash)</label>
-                            <input
-                                type="password"
-                                name="passwordHash"
-                                value={formData.passwordHash}
                                 onChange={handleInputChange}
-                            />
+                            >
+                                <option value="DRIVER">Conductor</option>
+                                <option value="DISPATCHER">Despachador</option>
+                                <option value="CLERK">Empleado</option>
+                                <option value="ADMIN">Administrador</option>
+                            </select>
                         </div>
+
                         <div className="form-buttons">
                             <button
                                 className="btn btn--primary"
@@ -272,24 +360,12 @@ export default function AdminConductores() {
                             <span className="detail-value">{selectedDriver.phone}</span>
                         </div>
                         <div className="detail-item">
+                            <span className="detail-label">Fecha Nacimiento:</span>
+                            <span className="detail-value">{formatDate(selectedDriver.bornDate)}</span>
+                        </div>
+                        <div className="detail-item">
                             <span className="detail-label">Rol:</span>
-                            <span className="detail-value">{selectedDriver.rol}</span>
-                        </div>
-                        <div className="detail-item">
-                            <span className="detail-label">Asignaciones como conductor:</span>
-                            <span className="detail-value">
-                                {selectedDriver.driverAssignments
-                                    ? selectedDriver.driverAssignments.length
-                                    : 0}
-                            </span>
-                        </div>
-                        <div className="detail-item">
-                            <span className="detail-label">Asignaciones como despachador:</span>
-                            <span className="detail-value">
-                                {selectedDriver.dispatcherAssignments
-                                    ? selectedDriver.dispatcherAssignments.length
-                                    : 0}
-                            </span>
+                            <span className="detail-value">{getRolText(selectedDriver.rol)}</span>
                         </div>
                     </div>
                     <button className="btn btn--primary" onClick={() => setView('list')}>

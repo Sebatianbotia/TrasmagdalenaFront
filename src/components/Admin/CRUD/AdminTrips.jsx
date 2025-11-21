@@ -149,7 +149,7 @@ export default function AdminTrips() {
                 fareRuleId: ''
             });
 
-            fetchCities();
+            fetchTrips();
             setView('list');
         }
         catch(error){
@@ -172,7 +172,7 @@ const handleDelete = async (id) => {
                 if(!response.ok){
                     throw new Error("No se pudo eliminar hp")
                 }
-                fetchAssignments();
+                fetchTrips();
             }
             catch(error){
                 console.error('Error: '+ error.message);
